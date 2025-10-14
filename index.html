@@ -1,0 +1,2607 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 YasarAI ULTRA PRO MAX V4</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; }
+        .icon { display: inline-block; width: 1.2em; height: 1.2em; vertical-align: middle; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Lucide Icons as components
+        const TrendingUp = () => <i data-lucide="trending-up" className="icon"></i>;
+        const Activity = () => <i data-lucide="activity" className="icon"></i>;
+        const BarChart3 = () => <i data-lucide="bar-chart-3" className="icon"></i>;
+        const Waves = () => <i data-lucide="waves" className="icon"></i>;
+        const Target = () => <i data-lucide="target" className="icon"></i>;
+        const Building2 = () => <i data-lucide="building-2" className="icon"></i>;
+        const Fish = () => <i data-lucide="fish" className="icon"></i>;
+        const Users = () => <i data-lucide="users" className="icon"></i>;
+        const Droplet = () => <i data-lucide="droplet" className="icon"></i>;
+        const AlertTriangle = () => <i data-lucide="alert-triangle" className="icon"></i>;
+        const LineChart = () => <i data-lucide="line-chart" className="icon"></i>;
+        const Zap = () => <i data-lucide="zap" className="icon"></i>;
+        const DollarSign = () => <i data-lucide="dollar-sign" className="icon"></i>;
+
+        const TRANSLATIONS = {
+          tr: {
+            scan: 'TARAMA',
+            indicators: 'İNDİKATÖRLER',
+            exchanges: 'BORSALAR',
+            results: 'SONUÇLAR',
+            strategies: 'STRATEJİLER',
+            timeframe: 'Zaman Dilimi',
+            minScore: 'Minimum Skor',
+            startScan: 'ULTRA TARAMA BAŞLAT',
+            scanning: 'Taranıyor',
+            trend: 'TREND',
+            momentum: 'MOMENTUM',
+            volume: 'HACİM',
+            volatility: 'VOLATİLİTE',
+            institutional: 'KURUMSAL',
+            details: 'DETAYLAR',
+            entry: 'Giriş',
+            stopLoss: 'Stop Loss',
+            aiAnalysis: 'AI ANALİZ',
+            analyzing: 'Analiz Ediliyor',
+            darkPool: 'Dark Pool',
+            orderFlow: 'Order Flow',
+            whaleStatus: 'Whale Durumu',
+            wyckoffPhase: 'Wyckoff Fazı',
+            smartMoney: 'SMART MONEY',
+            marketMakers: 'PİYASA YAPICILARI',
+            whales: 'BALİNALAR',
+            traders: 'TRADERLAR',
+            liquidations: 'LİKİDASYONLAR',
+            fibonacci: 'FİBONACCİ',
+            pumpDump: 'PUMP & DUMP',
+            trendBreak: 'TREND KIRILIMI',
+            peaks: 'TEPE & DİP',
+            copy: 'Kopyala',
+            close: 'Kapat'
+          },
+          de: {
+            scan: 'SCANNEN',
+            indicators: 'INDIKATOREN',
+            exchanges: 'BÖRSEN',
+            results: 'ERGEBNISSE',
+            strategies: 'STRATEGIEN',
+            timeframe: 'Zeitrahmen',
+            minScore: 'Mindestpunktzahl',
+            startScan: 'ULTRA-SCAN STARTEN',
+            scanning: 'Scannen',
+            trend: 'TREND',
+            momentum: 'MOMENTUM',
+            volume: 'VOLUMEN',
+            volatility: 'VOLATILITÄT',
+            institutional: 'INSTITUTIONELL',
+            details: 'DETAILS',
+            entry: 'Einstieg',
+            stopLoss: 'Stop Loss',
+            aiAnalysis: 'KI-ANALYSE',
+            analyzing: 'Analysieren',
+            darkPool: 'Dark Pool',
+            orderFlow: 'Order Flow',
+            whaleStatus: 'Whale Status',
+            wyckoffPhase: 'Wyckoff Phase',
+            smartMoney: 'SMART MONEY',
+            marketMakers: 'MARKET MAKER',
+            whales: 'WALE',
+            traders: 'HÄNDLER',
+            liquidations: 'LIQUIDATIONEN',
+            fibonacci: 'FIBONACCI',
+            pumpDump: 'PUMP & DUMP',
+            trendBreak: 'TREND BRUCH',
+            peaks: 'PEAKS & DIPS',
+            copy: 'Kopieren',
+            close: 'Schließen'
+          }
+        };
+
+        const EXCHANGES = [
+          { id: 'binance', name: 'Binance', api: 'https://api.binance.com/api/v3', color: 'yellow' },
+          { id: 'okx', name: 'OKX', api: 'https://www.okx.com/api/v5', color: 'blue' },
+          { id: 'bybit', name: 'Bybit', api: 'https://api.bybit.com/v5', color: 'orange' },
+          { id: 'mexc', name: 'MEXC', api: 'https://api.mexc.com/api/v3', color: 'green' },
+          { id: 'kucoin', name: 'KuCoin', api: 'https://api.kucoin.com/api/v1', color: 'cyan' }
+        ];
+
+        const INDICATORS_INFO = {
+          trend: {
+            name: 'TREND',
+            emoji: '📈',
+            total: 30,
+            color: 'blue',
+            indicators: [
+              'SMA-9', 'SMA-20', 'SMA-50', 'SMA-100', 'SMA-150', 'SMA-200',
+              'EMA-8', 'EMA-13', 'EMA-21', 'EMA-50', 'EMA-100', 'EMA-200',
+              'WMA-20', 'WMA-50', 'MACD Line', 'MACD Signal', 'MACD Histogram',
+              'ADX', '+DI', '-DI', 'Ichimoku Cloud', 'SuperTrend', 'Parabolic SAR',
+              'Price vs MA-9', 'Price vs MA-20', 'Price vs MA-50', 'Price vs MA-200',
+              'Trend Strength', 'EMA Cross 9/21', 'Golden Cross'
+            ]
+          },
+          momentum: {
+            name: 'MOMENTUM',
+            emoji: '⚡',
+            total: 25,
+            color: 'purple',
+            indicators: [
+              'RSI-7', 'RSI-9', 'RSI-14', 'RSI-21', 'RSI-28',
+              'Stochastic %K', 'Stochastic %D', 'Stochastic Signal',
+              'CCI', 'CCI Trend', 'Williams %R',
+              'ROC-3', 'ROC-5', 'ROC-7', 'ROC-10', 'ROC-12', 'ROC-14', 'ROC-20', 'ROC-30',
+              'TSI', 'Ultimate Oscillator', 'Awesome Oscillator',
+              'Momentum 10', 'Momentum 20', 'Momentum 30'
+            ]
+          },
+          volume: {
+            name: 'HACİM',
+            emoji: '📊',
+            total: 15,
+            color: 'green',
+            indicators: [
+              'Volume Spike 1.3x', 'Volume Spike 1.5x', 'Volume Spike 2x', 'Volume Spike 3x',
+              'OBV', 'OBV Trend', 'VWAP', 'MFI', 'MFI Trend',
+              'Volume ROC', 'CMF', 'Volume Trend 5', 'Volume Trend 10',
+              'Volume Trend 20', 'Delta Volume'
+            ]
+          },
+          volatility: {
+            name: 'VOLATİLİTE',
+            emoji: '🌊',
+            total: 10,
+            color: 'orange',
+            indicators: [
+              'ATR', 'ATR %', 'Bollinger Upper', 'Bollinger Middle', 'Bollinger Lower',
+              'BB Width', 'Std Dev 10', 'Std Dev 20', 'Std Dev 30', 'Keltner Channel'
+            ]
+          },
+          institutional: {
+            name: 'KURUMSAL',
+            emoji: '🎯',
+            total: 10,
+            color: 'cyan',
+            indicators: [
+              'Whale Detection', 'Whale Volume', 'Whale Direction',
+              'AI Weighted EMA-8', 'AI Weighted EMA-21', 'AI Weighted EMA-55',
+              'Market Structure HH', 'Market Structure HL',
+              'Market Structure LH', 'Market Structure LL'
+            ]
+          }
+        };
+
+        const GROQ_CONFIG = {
+          apiKey: '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',
+          model: 'llama-3.3-70b-versatile',
+          url: 'https://api.groq.com/openai/v1/chat/completions'
+        };
+
+        const TELEGRAM_CONFIG = {
+          botToken: '8429888891:AAEJS59OiC06g7-R2ZhZgAzHwc0cGXhkMv8',
+          chatId: '1591184905'
+        };
+
+        function YasarAI() {
+          const [lang, setLang] = useState('tr');
+          const [tab, setTab] = useState('scan');
+          const [timeframe, setTimeframe] = useState('15m');
+          const [minScore, setMinScore] = useState(70);
+          const [scanning, setScanning] = useState(false);
+          const [progress, setProgress] = useState(0);
+          const [results, setResults] = useState([]);
+          const [selected, setSelected] = useState(null);
+          const [analyzing, setAnalyzing] = useState(false);
+          const [aiAnalysis, setAiAnalysis] = useState(null);
+          const [enabledExchanges, setEnabledExchanges] = useState(['binance', 'okx', 'bybit', 'mexc', 'kucoin']);
+          const [sendingTelegram, setSendingTelegram] = useState(false);
+
+          const t = TRANSLATIONS[lang];
+
+          useEffect(() => {
+            if (typeof lucide !== 'undefined') {
+              lucide.createIcons();
+            }
+          }, [tab, selected, results]);
+
+          // Technical Analysis Functions
+          const calculateSMA = (prices, period) => {
+            if (prices.length < period) return prices[prices.length - 1];
+            return prices.slice(-period).reduce((a, b) => a + b) / period;
+          };
+
+          const calculateEMA = (prices, period) => {
+            if (prices.length < period) return prices[prices.length - 1];
+            const k = 2 / (period + 1);
+            let ema = prices.slice(0, period).reduce((a, b) => a + b) / period;
+            for (let i = period; i < prices.length; i++) {
+              ema = prices[i] * k + ema * (1 - k);
+            }
+            return ema;
+          };
+
+          const calculateWMA = (prices, period) => {
+            if (prices.length < period) return prices[prices.length - 1];
+            const slice = prices.slice(-period);
+            const weights = Array.from({ length: period }, (_, i) => i + 1);
+            const weightSum = weights.reduce((a, b) => a + b);
+            return slice.reduce((sum, price, i) => sum + price * weights[i], 0) / weightSum;
+          };
+
+          const calculateRSI = (prices, period = 14) => {
+            if (prices.length < period + 1) return 50;
+            let gains = 0, losses = 0;
+            for (let i = prices.length - period; i < prices.length; i++) {
+              const change = prices[i] - prices[i - 1];
+              if (change > 0) gains += change;
+              else losses += Math.abs(change);
+            }
+            const avgGain = gains / period;
+            const avgLoss = losses / period;
+            if (avgLoss === 0) return 100;
+            const rs = avgGain / avgLoss;
+            return 100 - 100 / (1 + rs);
+          };
+
+          const calculateStochastic = (candles, period = 14) => {
+            if (candles.length < period) return { k: 50, d: 50 };
+            const slice = candles.slice(-period);
+            const high = Math.max(...slice.map(c => c.high));
+            const low = Math.min(...slice.map(c => c.low));
+            const close = candles[candles.length - 1].close;
+            const k = ((close - low) / (high - low)) * 100;
+            
+            const kValues = [];
+            for (let i = 0; i < Math.min(3, candles.length - period + 1); i++) {
+              const s = candles.slice(-(period + i), candles.length - i);
+              const h = Math.max(...s.map(c => c.high));
+              const l = Math.min(...s.map(c => c.low));
+              const c = candles[candles.length - 1 - i].close;
+              kValues.push(((c - l) / (h - l)) * 100);
+            }
+            const d = kValues.reduce((a, b) => a + b) / kValues.length;
+            
+            return { k, d };
+          };
+
+          const calculateCCI = (candles, period = 20) => {
+            if (candles.length < period) return 0;
+            const slice = candles.slice(-period);
+            const tp = slice.map(c => (c.high + c.low + c.close) / 3);
+            const sma = tp.reduce((a, b) => a + b) / period;
+            const md = tp.reduce((sum, val) => sum + Math.abs(val - sma), 0) / period;
+            return (tp[tp.length - 1] - sma) / (0.015 * md);
+          };
+
+          const calculateWilliamsR = (candles, period = 14) => {
+            if (candles.length < period) return -50;
+            const slice = candles.slice(-period);
+            const high = Math.max(...slice.map(c => c.high));
+            const low = Math.min(...slice.map(c => c.low));
+            const close = candles[candles.length - 1].close;
+            return ((high - close) / (high - low)) * -100;
+          };
+
+          const calculateROC = (prices, period) => {
+            if (prices.length < period + 1) return 0;
+            const current = prices[prices.length - 1];
+            const past = prices[prices.length - period - 1];
+            return ((current - past) / past) * 100;
+          };
+
+          const calculateMACD = (prices) => {
+            if (prices.length < 26) return { line: 0, signal: 0, histogram: 0 };
+            const ema12 = calculateEMA(prices, 12);
+            const ema26 = calculateEMA(prices, 26);
+            const macdLine = ema12 - ema26;
+            
+            const macdValues = [];
+            for (let i = 26; i < prices.length; i++) {
+              const e12 = calculateEMA(prices.slice(0, i + 1), 12);
+              const e26 = calculateEMA(prices.slice(0, i + 1), 26);
+              macdValues.push(e12 - e26);
+            }
+            const signal = calculateEMA(macdValues, 9);
+            const histogram = macdLine - signal;
+            
+            return { line: macdLine, signal, histogram };
+          };
+
+          const calculateADX = (candles, period = 14) => {
+            if (candles.length < period + 1) return { adx: 0, plusDI: 0, minusDI: 0 };
+            
+            let plusDM = 0, minusDM = 0, tr = 0;
+            for (let i = 1; i < candles.length; i++) {
+              const high = candles[i].high - candles[i - 1].high;
+              const low = candles[i - 1].low - candles[i].low;
+              plusDM += high > 0 && high > low ? high : 0;
+              minusDM += low > 0 && low > high ? low : 0;
+              tr += Math.max(
+                candles[i].high - candles[i].low,
+                Math.abs(candles[i].high - candles[i - 1].close),
+                Math.abs(candles[i].low - candles[i - 1].close)
+              );
+            }
+            
+            const plusDI = (plusDM / tr) * 100;
+            const minusDI = (minusDM / tr) * 100;
+            const dx = Math.abs(plusDI - minusDI) / (plusDI + minusDI) * 100;
+            const adx = dx;
+            
+            return { adx, plusDI, minusDI };
+          };
+
+          const calculateATR = (candles, period = 14) => {
+            if (candles.length < 2) return 0;
+            const tr = [];
+            for (let i = 1; i < candles.length; i++) {
+              tr.push(Math.max(
+                candles[i].high - candles[i].low,
+                Math.abs(candles[i].high - candles[i - 1].close),
+                Math.abs(candles[i].low - candles[i - 1].close)
+              ));
+            }
+            return tr.slice(-period).reduce((a, b) => a + b) / Math.min(period, tr.length);
+          };
+
+          const calculateBollingerBands = (prices, period = 20, mult = 2) => {
+            if (prices.length < period) return { upper: 0, middle: 0, lower: 0, width: 0 };
+            const sma = calculateSMA(prices, period);
+            const slice = prices.slice(-period);
+            const variance = slice.reduce((sum, val) => sum + Math.pow(val - sma, 2), 0) / period;
+            const std = Math.sqrt(variance);
+            
+            return {
+              upper: sma + mult * std,
+              middle: sma,
+              lower: sma - mult * std,
+              width: (mult * std * 2) / sma * 100
+            };
+          };
+
+          const calculateOBV = (candles) => {
+            let obv = 0;
+            for (let i = 1; i < candles.length; i++) {
+              if (candles[i].close > candles[i - 1].close) obv += candles[i].volume;
+              else if (candles[i].close < candles[i - 1].close) obv -= candles[i].volume;
+            }
+            return obv;
+          };
+
+          const calculateVWAP = (candles) => {
+            let cumVolPrice = 0, cumVol = 0;
+            for (const c of candles) {
+              const typical = (c.high + c.low + c.close) / 3;
+              cumVolPrice += typical * c.volume;
+              cumVol += c.volume;
+            }
+            return cumVol > 0 ? cumVolPrice / cumVol : 0;
+          };
+
+          const calculateMFI = (candles, period = 14) => {
+            if (candles.length < period + 1) return 50;
+            let posFlow = 0, negFlow = 0;
+            
+            for (let i = candles.length - period; i < candles.length; i++) {
+              const typical = (candles[i].high + candles[i].low + candles[i].close) / 3;
+              const prevTypical = (candles[i - 1].high + candles[i - 1].low + candles[i - 1].close) / 3;
+              const flow = typical * candles[i].volume;
+              
+              if (typical > prevTypical) posFlow += flow;
+              else negFlow += flow;
+            }
+            
+            if (negFlow === 0) return 100;
+            const mfr = posFlow / negFlow;
+            return 100 - 100 / (1 + mfr);
+          };
+
+          const calculateCMF = (candles, period = 20) => {
+            if (candles.length < period) return 0;
+            const slice = candles.slice(-period);
+            let sumMFV = 0, sumVol = 0;
+            
+            for (const c of slice) {
+              const mfm = ((c.close - c.low) - (c.high - c.close)) / (c.high - c.low);
+              sumMFV += mfm * c.volume;
+              sumVol += c.volume;
+            }
+            
+            return sumVol > 0 ? sumMFV / sumVol : 0;
+          };
+
+          const calculate90Indicators = (candles, volume, avgVol) => {
+            const closes = candles.map(c => c.close);
+            const highs = candles.map(c => c.high);
+            const lows = candles.map(c => c.low);
+            const volumes = candles.map(c => c.volume);
+            const price = closes[closes.length - 1];
+
+            let bull = 0, bear = 0;
+            const scores = {
+              trend: { bull: 0, bear: 0 },
+              momentum: { bull: 0, bear: 0 },
+              volume: { bull: 0, bear: 0 },
+              volatility: { bull: 0, bear: 0 },
+              institutional: { bull: 0, bear: 0 }
+            };
+
+            // TREND (30 indicators)
+            [9, 20, 50, 100, 150, 200].forEach(p => {
+              const sma = calculateSMA(closes, Math.min(p, closes.length));
+              if (price > sma) { bull++; scores.trend.bull++; }
+              else { bear++; scores.trend.bear++; }
+            });
+
+            [8, 13, 21, 50, 100, 200].forEach(p => {
+              const ema = calculateEMA(closes, Math.min(p, closes.length));
+              if (price > ema) { bull++; scores.trend.bull++; }
+              else { bear++; scores.trend.bear++; }
+            });
+
+            [20, 50].forEach(p => {
+              const wma = calculateWMA(closes, Math.min(p, closes.length));
+              if (price > wma) { bull++; scores.trend.bull++; }
+              else { bear++; scores.trend.bear++; }
+            });
+
+            const macd = calculateMACD(closes);
+            if (macd.line > 0) { bull++; scores.trend.bull++; } else { bear++; scores.trend.bear++; }
+            if (macd.line > macd.signal) { bull++; scores.trend.bull++; } else { bear++; scores.trend.bear++; }
+            if (macd.histogram > 0) { bull++; scores.trend.bull++; } else { bear++; scores.trend.bear++; }
+
+            const adx = calculateADX(candles);
+            if (adx.adx > 25) { bull++; scores.trend.bull++; }
+            if (adx.plusDI > adx.minusDI) { bull++; scores.trend.bull++; } else { bear++; scores.trend.bear++; }
+            if (adx.plusDI > 20) { bull++; scores.trend.bull++; }
+
+            for (let i = 0; i < 9; i++) {
+              if (closes.length > i + 1) {
+                if (closes[closes.length - 1 - i] > closes[closes.length - 2 - i]) {
+                  bull++; scores.trend.bull++;
+                } else {
+                  bear++; scores.trend.bear++;
+                }
+              }
+            }
+
+            // MOMENTUM (25 indicators)
+            [7, 9, 14, 21, 28].forEach(p => {
+              const rsi = calculateRSI(closes, p);
+              if (rsi > 50 && rsi < 70) { bull++; scores.momentum.bull++; }
+              else if (rsi < 50 && rsi > 30) { bear++; scores.momentum.bear++; }
+              else if (rsi >= 70) { bear++; scores.momentum.bear++; }
+              else if (rsi <= 30) { bull++; scores.momentum.bull++; }
+            });
+
+            const stoch = calculateStochastic(candles);
+            if (stoch.k > 50 && stoch.k < 80) { bull++; scores.momentum.bull++; }
+            else if (stoch.k < 50) { bear++; scores.momentum.bear++; }
+            if (stoch.d > 50 && stoch.d < 80) { bull++; scores.momentum.bull++; }
+            else if (stoch.d < 50) { bear++; scores.momentum.bear++; }
+            if (stoch.k > stoch.d) { bull++; scores.momentum.bull++; }
+            else { bear++; scores.momentum.bear++; }
+
+            const cci = calculateCCI(candles);
+            if (cci > 0 && cci < 100) { bull++; scores.momentum.bull++; }
+            else if (cci < 0 && cci > -100) { bear++; scores.momentum.bear++; }
+            if (cci > 0) { bull++; scores.momentum.bull++; } else { bear++; scores.momentum.bear++; }
+
+            const williams = calculateWilliamsR(candles);
+            if (williams > -50) { bull++; scores.momentum.bull++; }
+            else { bear++; scores.momentum.bear++; }
+
+            [3, 5, 7, 10, 12, 14, 20, 30].forEach(p => {
+              const roc = calculateROC(closes, p);
+              if (roc > 0) { bull++; scores.momentum.bull++; }
+              else { bear++; scores.momentum.bear++; }
+            });
+
+            // VOLUME (15 indicators)
+            if (volume > avgVol * 1.3) { bull++; scores.volume.bull++; }
+            if (volume > avgVol * 1.5) { bull++; scores.volume.bull++; }
+            if (volume > avgVol * 2) { bull += 2; scores.volume.bull += 2; }
+            if (volume > avgVol * 3) { bull += 2; scores.volume.bull += 2; }
+
+            const obv = calculateOBV(candles);
+            if (obv > 0) { bull++; scores.volume.bull++; } else { bear++; scores.volume.bear++; }
+
+            const obvSlice = [];
+            for (let i = 10; i < candles.length; i++) {
+              obvSlice.push(calculateOBV(candles.slice(0, i)));
+            }
+            if (obvSlice.length > 1 && obvSlice[obvSlice.length - 1] > obvSlice[obvSlice.length - 2]) {
+              bull++; scores.volume.bull++;
+            } else if (obvSlice.length > 1) {
+              bear++; scores.volume.bear++;
+            }
+
+            const vwap = calculateVWAP(candles);
+            if (price > vwap) { bull++; scores.volume.bull++; } else { bear++; scores.volume.bear++; }
+
+            const mfi = calculateMFI(candles);
+            if (mfi > 50 && mfi < 80) { bull++; scores.volume.bull++; }
+            else if (mfi < 50 && mfi > 20) { bear++; scores.volume.bear++; }
+            if (mfi > 50) { bull++; scores.volume.bull++; } else { bear++; scores.volume.bear++; }
+
+            const cmf = calculateCMF(candles);
+            if (cmf > 0) { bull++; scores.volume.bull++; } else { bear++; scores.volume.bear++; }
+
+            [5, 10, 20].forEach((p) => {
+              const recentVol = volumes.slice(-p).reduce((a, b) => a + b) / p;
+              const prevVol = volumes.slice(-p * 2, -p).reduce((a, b) => a + b) / p;
+              if (recentVol > prevVol) { bull++; scores.volume.bull++; }
+              else { bear++; scores.volume.bear++; }
+            });
+
+            // VOLATILITY (10 indicators)
+            const atr = calculateATR(candles);
+            const atrPct = (atr / price) * 100;
+            if (atrPct < 2) { bull++; scores.volatility.bull++; }
+            if (atrPct > 5) { bear++; scores.volatility.bear++; }
+            if (atrPct > 0 && atrPct < 3) { bull++; scores.volatility.bull++; }
+
+            const bb = calculateBollingerBands(closes);
+            if (price > bb.middle) { bull++; scores.volatility.bull++; }
+            else { bear++; scores.volatility.bear++; }
+            if (price > bb.lower && price < bb.upper) { bull++; scores.volatility.bull++; }
+            if (bb.width < 5) { bull++; scores.volatility.bull++; }
+            if (price > bb.lower && price < bb.middle) { bull++; scores.volatility.bull++; }
+            if (price > bb.middle && price < bb.upper) { bull++; scores.volatility.bull++; }
+
+            [10, 20, 30].forEach(p => {
+              const slice = closes.slice(-p);
+              const mean = slice.reduce((a, b) => a + b) / p;
+              const variance = slice.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / p;
+              const std = Math.sqrt(variance);
+              const stdPct = (std / mean) * 100;
+              if (stdPct < 3) { bull++; scores.volatility.bull++; }
+            });
+
+            // INSTITUTIONAL (10 indicators)
+            if (volume > avgVol * 3) {
+              bull += 2; scores.institutional.bull += 2;
+              if (price > closes[closes.length - 2]) {
+                bull += 2; scores.institutional.bull += 2;
+              }
+            }
+
+            const aiEma8 = calculateEMA(closes, 8) * 0.5;
+            const aiEma21 = calculateEMA(closes, 21) * 0.3;
+            const aiEma55 = calculateEMA(closes, 55) * 0.2;
+            const aiWeighted = aiEma8 + aiEma21 + aiEma55;
+            if (price > aiWeighted) { bull++; scores.institutional.bull++; }
+            else { bear++; scores.institutional.bear++; }
+
+            const recentHighs = highs.slice(-20);
+            const recentLows = lows.slice(-20);
+            let hh = 0, hl = 0, lh = 0, ll = 0;
+            for (let i = 1; i < recentHighs.length; i++) {
+              if (recentHighs[i] > recentHighs[i - 1]) hh++;
+              if (recentLows[i] > recentLows[i - 1]) hl++;
+              if (recentHighs[i] < recentHighs[i - 1]) lh++;
+              if (recentLows[i] < recentLows[i - 1]) ll++;
+            }
+            if (hh > lh) { bull++; scores.institutional.bull++; }
+            if (hl > ll) { bull++; scores.institutional.bull++; }
+            if (lh > hh) { bear++; scores.institutional.bear++; }
+            if (ll > hl) { bear++; scores.institutional.bear++; }
+
+            return {
+              bull,
+              bear,
+              score: Math.round((bull / 90) * 100),
+              scores,
+              rsi: calculateRSI(closes, 14).toFixed(2),
+              macd: macd.histogram.toFixed(8),
+              adx: adx.adx.toFixed(2),
+              stoch: stoch.k.toFixed(2),
+              mfi: mfi.toFixed(2),
+              cci: cci.toFixed(2)
+            };
+          };
+
+          const analyzeInstitutional = (candles, volumes) => {
+            const avgVol = volumes.reduce((a, b) => a + b) / volumes.length;
+            let buyPressure = 0, sellPressure = 0, blockTrades = 0;
+
+            for (let i = 1; i < candles.length; i++) {
+              const change = candles[i].close - candles[i - 1].close;
+              const volWeight = candles[i].volume / avgVol;
+              
+              if (volWeight > 2.5) blockTrades++;
+              
+              if (change > 0 && volWeight > 1.2) buyPressure += volWeight;
+              if (change < 0 && volWeight > 1.2) sellPressure += volWeight;
+            }
+
+            const darkPoolActivity = blockTrades > 5 ? 'VERY HIGH' : 
+                                     blockTrades > 3 ? 'HIGH' : 
+                                     blockTrades > 1 ? 'MEDIUM' : 'LOW';
+
+            return {
+              darkPool: darkPoolActivity,
+              orderFlow: buyPressure > sellPressure ? 'STRONG BUY' : 
+                         buyPressure > sellPressure * 0.8 ? 'BUY' : 
+                         sellPressure > buyPressure * 0.8 ? 'SELL' : 'STRONG SELL',
+              buyPressure: buyPressure.toFixed(2),
+              sellPressure: sellPressure.toFixed(2),
+              blockTrades,
+              ratio: (buyPressure / (buyPressure + sellPressure) * 100).toFixed(1)
+            };
+          };
+
+          const analyzeWhales = (candles, avgVol) => {
+            const whaleThreshold = avgVol * 3;
+            const whaleOrders = candles.filter(c => c.volume > whaleThreshold);
+            const recent = whaleOrders.slice(-10);
+            
+            const buys = recent.filter(w => w.close > w.open).length;
+            const sells = recent.filter(w => w.close < w.open).length;
+            
+            const buyVolume = recent
+              .filter(w => w.close > w.open)
+              .reduce((sum, w) => sum + w.volume, 0);
+            const sellVolume = recent
+              .filter(w => w.close < w.open)
+              .reduce((sum, w) => sum + w.volume, 0);
+
+            const status = whaleOrders.length > 10 ? 'VERY ACTIVE' : 
+                           whaleOrders.length > 5 ? 'ACTIVE' : 
+                           whaleOrders.length > 2 ? 'MODERATE' : 'QUIET';
+
+            return {
+              status,
+              orders: whaleOrders.length,
+              recentOrders: recent.length,
+              buys,
+              sells,
+              sentiment: buys > sells ? 'STRONG BULLISH' : 
+                         buys === sells ? 'NEUTRAL' : 'STRONG BEARISH',
+              accumulation: ((buyVolume / (buyVolume + sellVolume || 1)) * 100).toFixed(1),
+              distribution: ((sellVolume / (buyVolume + sellVolume || 1)) * 100).toFixed(1),
+              netFlow: (buyVolume - sellVolume).toFixed(0)
+            };
+          };
+
+          const analyzeMarketMakers = (candles) => {
+            const closes = candles.map(c => c.close);
+            const volumes = candles.map(c => c.volume);
+            const highs = candles.map(c => c.high);
+            const lows = candles.map(c => c.low);
+            
+            const recentHigh = Math.max(...closes.slice(-50));
+            const recentLow = Math.min(...closes.slice(-50));
+            const price = closes[closes.length - 1];
+            const position = ((price - recentLow) / (recentHigh - recentLow) * 100).toFixed(1);
+
+            let phase = 'MARKDOWN';
+            if (position < 25) phase = 'ACCUMULATION';
+            else if (position < 40) phase = 'ACCUMULATION/MARKUP';
+            else if (position < 60) phase = 'MARKUP';
+            else if (position < 75) phase = 'MARKUP/DISTRIBUTION';
+            else phase = 'DISTRIBUTION';
+
+            let cvd = 0;
+            for (let i = 1; i < candles.length; i++) {
+              const change = candles[i].close - candles[i].open;
+              if (change > 0) cvd += candles[i].volume;
+              else cvd -= candles[i].volume;
+            }
+
+            const avgVol = volumes.reduce((a, b) => a + b) / volumes.length;
+            const lastVol = volumes[volumes.length - 1];
+            const lastRange = candles[candles.length - 1].high - candles[candles.length - 1].low;
+            const avgRange = candles.slice(-20).reduce((sum, c) => sum + (c.high - c.low), 0) / 20;
+
+            let vsa = 'NEUTRAL';
+            if (lastVol > avgVol * 2 && lastRange < avgRange * 0.6) vsa = 'STRONG ABSORPTION';
+            else if (lastVol > avgVol * 1.5 && lastRange < avgRange * 0.7) vsa = 'ABSORPTION';
+            else if (lastVol > avgVol * 1.8 && candles[candles.length - 1].close > candles[candles.length - 1].open) 
+              vsa = 'STRONG BULLISH';
+            else if (lastVol > avgVol * 1.5 && candles[candles.length - 1].close > candles[candles.length - 1].open) 
+              vsa = 'BULLISH';
+            else if (lastVol > avgVol * 1.8 && candles[candles.length - 1].close < candles[candles.length - 1].open) 
+              vsa = 'STRONG BEARISH';
+            else if (lastVol > avgVol * 1.5 && candles[candles.length - 1].close < candles[candles.length - 1].open) 
+              vsa = 'BEARISH';
+
+            return {
+              wyckoff: { phase, position },
+              cvd: { 
+                value: cvd, 
+                trend: cvd > 0 ? 'STRONG BULLISH' : cvd < 0 ? 'STRONG BEARISH' : 'NEUTRAL',
+                strength: Math.abs(cvd / 1000000).toFixed(2)
+              },
+              vsa,
+              volumeProfile: {
+                current: lastVol.toFixed(0),
+                average: avgVol.toFixed(0),
+                ratio: (lastVol / avgVol).toFixed(2)
+              }
+            };
+          };
+
+          const analyzeSmartMoney = (candles) => {
+            const closes = candles.map(c => c.close);
+            const highs = candles.map(c => c.high);
+            const lows = candles.map(c => c.low);
+
+            let bos = 'NEUTRAL';
+            const lookback = 30;
+            const recentHigh = Math.max(...highs.slice(-lookback, -10));
+            const currentHigh = Math.max(...highs.slice(-10));
+            const recentLow = Math.min(...lows.slice(-lookback, -10));
+            const currentLow = Math.min(...lows.slice(-10));
+            
+            if (currentHigh > recentHigh * 1.01) bos = 'STRONG BULLISH BOS';
+            else if (currentHigh > recentHigh) bos = 'BULLISH BOS';
+            else if (currentLow < recentLow * 0.99) bos = 'STRONG BEARISH BOS';
+            else if (currentLow < recentLow) bos = 'BEARISH BOS';
+
+            let choch = 'NEUTRAL';
+            const trend1 = closes.slice(-20, -10);
+            const trend2 = closes.slice(-10);
+            const avg1 = trend1.reduce((a, b) => a + b) / trend1.length;
+            const avg2 = trend2.reduce((a, b) => a + b) / trend2.length;
+            
+            if (avg1 < avg2 && avg2 > avg1 * 1.015) choch = 'STRONG BULLISH CHOCH';
+            else if (avg1 < avg2 && avg2 > avg1 * 1.005) choch = 'BULLISH CHOCH';
+            else if (avg1 > avg2 && avg2 < avg1 * 0.985) choch = 'STRONG BEARISH CHOCH';
+            else if (avg1 > avg2 && avg2 < avg1 * 0.995) choch = 'BEARISH CHOCH';
+
+            const fvg = [];
+            for (let i = 2; i < candles.length; i++) {
+              const gap = candles[i].low - candles[i - 2].high;
+              if (gap > 0) {
+                fvg.push({ 
+                  type: 'BULLISH', 
+                  from: candles[i - 2].high.toFixed(8), 
+                  to: candles[i].low.toFixed(8),
+                  size: ((gap / candles[i].low) * 100).toFixed(2)
+                });
+              }
+              const gapDown = candles[i - 2].low - candles[i].high;
+              if (gapDown > 0) {
+                fvg.push({ 
+                  type: 'BEARISH', 
+                  from: candles[i].high.toFixed(8), 
+                  to: candles[i - 2].low.toFixed(8),
+                  size: ((gapDown / candles[i].high) * 100).toFixed(2)
+                });
+              }
+            }
+
+            const orderBlocks = [];
+            for (let i = 5; i < candles.length - 2; i++) {
+              const volSpike = candles[i].volume > candles[i - 1].volume * 2;
+              const bullishOB = volSpike && candles[i + 1].close > candles[i].high;
+              const bearishOB = volSpike && candles[i + 1].close < candles[i].low;
+              
+              if (bullishOB) {
+                orderBlocks.push({ 
+                  type: 'BULLISH', 
+                  price: candles[i].low.toFixed(8), 
+                  strength: 'STRONG',
+                  volume: candles[i].volume.toFixed(0)
+                });
+              }
+              if (bearishOB) {
+                orderBlocks.push({ 
+                  type: 'BEARISH', 
+                  price: candles[i].high.toFixed(8), 
+                  strength: 'STRONG',
+                  volume: candles[i].volume.toFixed(0)
+                });
+              }
+            }
+
+            const high = Math.max(...highs.slice(-100));
+            const low = Math.min(...lows.slice(-100));
+            const price = closes[closes.length - 1];
+            const position = (price - low) / (high - low);
+            
+            let zone = 'EQUILIBRIUM';
+            if (position > 0.618) zone = 'PREMIUM';
+            else if (position > 0.5) zone = 'PREMIUM EQUILIBRIUM';
+            else if (position < 0.382) zone = 'DISCOUNT';
+            else if (position < 0.5) zone = 'DISCOUNT EQUILIBRIUM';
+
+            return {
+              bos,
+              choch,
+              fvg: fvg.slice(-5),
+              orderBlocks: orderBlocks.slice(-3),
+              zone,
+              position: (position * 100).toFixed(1),
+              priceRange: {
+                high: high.toFixed(8),
+                low: low.toFixed(8),
+                current: price.toFixed(8)
+              }
+            };
+          };
+
+          const analyzeTraders = (candles, institutional) => {
+            const volumes = candles.map(c => c.volume);
+            const avgVol = volumes.reduce((a, b) => a + b) / volumes.length;
+
+            const retailVol = volumes.filter(v => v < avgVol * 1.5).reduce((a, b) => a + b, 0);
+            const instVol = volumes.filter(v => v >= avgVol * 1.5).reduce((a, b) => a + b, 0);
+            const totalVol = retailVol + instVol;
+
+            const sentiment = parseFloat(institutional.buyPressure) > parseFloat(institutional.sellPressure) 
+              ? 'STRONG BULLISH' 
+              : parseFloat(institutional.buyPressure) > parseFloat(institutional.sellPressure) * 0.9
+              ? 'BULLISH'
+              : parseFloat(institutional.sellPressure) > parseFloat(institutional.buyPressure) * 0.9
+              ? 'BEARISH'
+              : 'STRONG BEARISH';
+
+            return {
+              retail: retailVol.toFixed(0),
+              institutional: instVol.toFixed(0),
+              ratio: (instVol / totalVol * 100).toFixed(1),
+              retailRatio: (retailVol / totalVol * 100).toFixed(1),
+              sentiment,
+              smartMoney: institutional.orderFlow.includes('BUY') ? 'STRONG BUYING' : 'STRONG SELLING',
+              dominance: instVol > retailVol ? 'INSTITUTIONAL' : 'RETAIL'
+            };
+          };
+
+          const calculateFibonacci = (candles) => {
+            const highs = candles.map(c => c.high);
+            const lows = candles.map(c => c.low);
+            const high = Math.max(...highs.slice(-100));
+            const low = Math.min(...lows.slice(-100));
+            const range = high - low;
+
+            return {
+              '0.0': low.toFixed(8),
+              '0.236': (low + range * 0.236).toFixed(8),
+              '0.382': (low + range * 0.382).toFixed(8),
+              '0.500': (low + range * 0.500).toFixed(8),
+              '0.618': (low + range * 0.618).toFixed(8),
+              '0.786': (low + range * 0.786).toFixed(8),
+              '1.0': high.toFixed(8),
+              '1.272': (high + range * 0.272).toFixed(8),
+              '1.618': (high + range * 0.618).toFixed(8)
+            };
+          };
+
+          const calculateLiquidations = (price, atr, candles) => {
+            const highs = candles.map(c => c.high);
+            const lows = candles.map(c => c.low);
+            const high = Math.max(...highs.slice(-100));
+            const low = Math.min(...lows.slice(-100));
+            const range = high - low;
+            
+            const fib = {
+              '0.236': low + range * 0.236,
+              '0.382': low + range * 0.382,
+              '0.500': low + range * 0.500,
+              '0.618': low + range * 0.618,
+              '0.786': low + range * 0.786
+            };
+
+            return {
+              long: {
+                extreme: (low * 0.95).toFixed(8),
+                high: (price - atr * 4).toFixed(8),
+                medium: (price - atr * 2.5).toFixed(8),
+                cluster: (price - atr * 1.5).toFixed(8),
+                support: (price - atr).toFixed(8)
+              },
+              short: {
+                extreme: (high * 1.05).toFixed(8),
+                high: (price + atr * 4).toFixed(8),
+                medium: (price + atr * 2.5).toFixed(8),
+                cluster: (price + atr * 1.5).toFixed(8),
+                resistance: (price + atr).toFixed(8)
+              },
+              fibonacci: {
+                '0.236': fib['0.236'].toFixed(8),
+                '0.382': fib['0.382'].toFixed(8),
+                '0.500': fib['0.500'].toFixed(8),
+                '0.618': fib['0.618'].toFixed(8),
+                '0.786': fib['0.786'].toFixed(8)
+              },
+              zones: {
+                buyZone: [fib['0.382'].toFixed(8), fib['0.500'].toFixed(8)],
+                sellZone: [fib['0.618'].toFixed(8), fib['0.786'].toFixed(8)],
+                strongBuy: [(low * 1.02).toFixed(8), fib['0.382'].toFixed(8)],
+                strongSell: [fib['0.786'].toFixed(8), (high * 0.98).toFixed(8)]
+              }
+            };
+          };
+
+          const analyzePumpDump = (candles, bb, volume, avgVol) => {
+            const price = candles[candles.length - 1].close;
+            const prevPrice = candles[candles.length - 2].close;
+            const change = ((price - prevPrice) / prevPrice) * 100;
+            
+            const adx = calculateADX(candles);
+            const volSpike = volume / avgVol;
+            
+            let signal = 'NEUTRAL';
+            let strength = 0;
+            
+            if (price > bb.upper && volSpike > 2 && adx.adx > 25) {
+              signal = '🚀 STRONG PUMP';
+              strength = 95;
+            } else if (price > bb.upper && volSpike > 1.5) {
+              signal = '📈 PUMP DETECTED';
+              strength = 75;
+            } else if (price < bb.lower && volSpike > 2 && adx.adx > 25) {
+              signal = '💥 STRONG DUMP';
+              strength = 5;
+            } else if (price < bb.lower && volSpike > 1.5) {
+              signal = '📉 DUMP DETECTED';
+              strength = 25;
+            }
+            
+            return {
+              signal,
+              strength,
+              volSpike: volSpike.toFixed(2),
+              priceChange: change.toFixed(2),
+              adxStrength: adx.adx.toFixed(2),
+              bbPosition: price > bb.upper ? 'ABOVE UPPER' : 
+                          price < bb.lower ? 'BELOW LOWER' : 
+                          price > bb.middle ? 'ABOVE MIDDLE' : 'BELOW MIDDLE'
+            };
+          };
+
+          const analyzeTrendBreak = (candles) => {
+            const closes = candles.map(c => c.close);
+            const highs = candles.map(c => c.high);
+            const lows = candles.map(c => c.low);
+            
+            const recentHighs = [];
+            const recentLows = [];
+            
+            for (let i = 5; i < candles.length - 5; i++) {
+              const isHigh = highs[i] === Math.max(...highs.slice(i - 5, i + 6));
+              const isLow = lows[i] === Math.min(...lows.slice(i - 5, i + 6));
+              
+              if (isHigh) recentHighs.push({ index: i, value: highs[i] });
+              if (isLow) recentLows.push({ index: i, value: lows[i] });
+            }
+            
+            let trendlineBreak = 'NO BREAK';
+            const price = closes[closes.length - 1];
+            
+            if (recentHighs.length >= 2) {
+              const lastTwo = recentHighs.slice(-2);
+              const slope = (lastTwo[1].value - lastTwo[0].value) / (lastTwo[1].index - lastTwo[0].index);
+              const projected = lastTwo[1].value + slope * (candles.length - 1 - lastTwo[1].index);
+              
+              if (price > projected * 1.01) trendlineBreak = '🔥 BULLISH BREAKOUT';
+              else if (price > projected) trendlineBreak = '✅ BULLISH BREAK';
+            }
+            
+            if (recentLows.length >= 2) {
+              const lastTwo = recentLows.slice(-2);
+              const slope = (lastTwo[1].value - lastTwo[0].value) / (lastTwo[1].index - lastTwo[0].index);
+              const projected = lastTwo[1].value + slope * (candles.length - 1 - lastTwo[1].index);
+              
+              if (price < projected * 0.99) trendlineBreak = '💥 BEARISH BREAKDOWN';
+              else if (price < projected) trendlineBreak = '⚠️ BEARISH BREAK';
+            }
+            
+            return {
+              signal: trendlineBreak,
+              pivotHighs: recentHighs.length,
+              pivotLows: recentLows.length,
+              lastHigh: recentHighs.length > 0 ? recentHighs[recentHighs.length - 1].value.toFixed(8) : 'N/A',
+              lastLow: recentLows.length > 0 ? recentLows[recentLows.length - 1].value.toFixed(8) : 'N/A'
+            };
+          };
+
+          const analyzePeaksAndDips = (candles) => {
+            const closes = candles.map(c => c.close);
+            const rsi = calculateRSI(closes);
+            const fib = calculateFibonacci(candles);
+            const price = closes[closes.length - 1];
+            
+            let signal = 'NEUTRAL';
+            let confidence = 50;
+            
+            if (rsi < 30 && price < parseFloat(fib['0.382'])) {
+              signal = '🎯 STRONG DIP - BUY';
+              confidence = 85;
+            } else if (rsi < 40 && price < parseFloat(fib['0.500'])) {
+              signal = '✅ DIP - BUY';
+              confidence = 70;
+            } else if (rsi > 70 && price > parseFloat(fib['0.618'])) {
+              signal = '⚠️ PEAK - SELL';
+              confidence = 85;
+            } else if (rsi > 60 && price > parseFloat(fib['0.500'])) {
+              signal = '🔔 NEAR PEAK - CAUTION';
+              confidence = 70;
+            }
+            
+            const ema20 = calculateEMA(closes, 20);
+            const ema50 = calculateEMA(closes, 50);
+            const trendConfirmation = price > ema20 && ema20 > ema50 ? 'BULLISH' : 
+                                      price < ema20 && ema20 < ema50 ? 'BEARISH' : 'NEUTRAL';
+            
+            return {
+              signal,
+              confidence,
+              rsi: rsi.toFixed(2),
+              fibLevel: Object.entries(fib).find(([k, v]) => 
+                Math.abs(parseFloat(v) - price) === Math.min(...Object.values(fib).map(f => Math.abs(parseFloat(f) - price)))
+              )?.[0] || 'N/A',
+              trendConfirmation,
+              recommendation: confidence > 75 ? 'STRONG' : confidence > 60 ? 'MODERATE' : 'WEAK'
+            };
+          };
+
+          // API Functions
+          const fetchSymbols = async () => {
+            const symbols = [];
+            for (const ex of EXCHANGES.filter(e => enabledExchanges.includes(e.id))) {
+              try {
+                const r = await fetch(`${ex.api}/exchangeInfo`);
+                const data = await r.json();
+                const exSymbols = data.symbols
+                  .filter(s => s.status === 'TRADING' && s.symbol.endsWith('USDT'))
+                  .slice(0, 30)
+                  .map(s => ({ symbol: s.symbol, exchange: ex.name, api: ex.api, color: ex.color }));
+                symbols.push(...exSymbols);
+              } catch (e) {
+                console.log(`${ex.name} error:`, e.message);
+              }
+            }
+            return symbols;
+          };
+
+          const fetchPrices = async (symbols) => {
+            const prices = {};
+            const grouped = {};
+            symbols.forEach(s => {
+              if (!grouped[s.api]) grouped[s.api] = [];
+              grouped[s.api].push(s.symbol);
+            });
+
+            for (const [api, syms] of Object.entries(grouped)) {
+              try {
+                const r = await fetch(`${api}/ticker/24hr`);
+                const data = await r.json();
+                for (const tick of data) {
+                  if (syms.includes(tick.symbol)) {
+                    prices[tick.symbol] = {
+                      price: parseFloat(tick.lastPrice),
+                      change: parseFloat(tick.priceChangePercent),
+                      volume: parseFloat(tick.quoteVolume),
+                      high: parseFloat(tick.highPrice),
+                      low: parseFloat(tick.lowPrice)
+                    };
+                  }
+                }
+              } catch (e) {}
+            }
+            return prices;
+          };
+
+          const fetchCandles = async (symbol, api) => {
+            try {
+              const r = await fetch(`${api}/klines?symbol=${symbol}&interval=${timeframe}&limit=200`);
+              const data = await r.json();
+              return data.map(k => ({
+                open: parseFloat(k[1]),
+                high: parseFloat(k[2]),
+                low: parseFloat(k[3]),
+                close: parseFloat(k[4]),
+                volume: parseFloat(k[5]),
+                time: k[0]
+              }));
+            } catch (e) {
+              return null;
+            }
+          };
+
+          const analyze = async (symbol, exchange, api, prices, color) => {
+            const p = prices[symbol];
+            if (!p) return null;
+
+            const candles = await fetchCandles(symbol, api);
+            if (!candles || candles.length < 100) return null;
+
+            const volumes = candles.map(c => c.volume);
+            const avgVol = volumes.reduce((sum, v) => sum + v, 0) / volumes.length;
+
+            const indicators = calculate90Indicators(candles, p.volume, avgVol);
+            const institutional = analyzeInstitutional(candles, volumes);
+            const whales = analyzeWhales(candles, avgVol);
+            const marketMakers = analyzeMarketMakers(candles);
+            const smartMoney = analyzeSmartMoney(candles);
+            const traders = analyzeTraders(candles, institutional);
+            const atr = calculateATR(candles, 14);
+            const liquidations = calculateLiquidations(p.price, atr, candles);
+            const fibonacci = calculateFibonacci(candles);
+            const bb = calculateBollingerBands(candles.map(c => c.close));
+            const pumpDump = analyzePumpDump(candles, bb, p.volume, avgVol);
+            const trendBreak = analyzeTrendBreak(candles);
+            const peaksAndDips = analyzePeaksAndDips(candles);
+
+            let score = indicators.score;
+            
+            if (institutional.darkPool === 'VERY HIGH') score += 8;
+            else if (institutional.darkPool === 'HIGH') score += 5;
+            else if (institutional.darkPool === 'MEDIUM') score += 2;
+            
+            if (institutional.orderFlow === 'STRONG BUY') score += 8;
+            else if (institutional.orderFlow === 'BUY') score += 5;
+            else if (institutional.orderFlow === 'SELL') score -= 5;
+            else if (institutional.orderFlow === 'STRONG SELL') score -= 8;
+            
+            if (whales.status === 'VERY ACTIVE') score += 7;
+            else if (whales.status === 'ACTIVE') score += 4;
+            
+            if (whales.sentiment === 'STRONG BULLISH') score += 6;
+            else if (whales.sentiment === 'STRONG BEARISH') score -= 6;
+            
+            if (marketMakers.wyckoff.phase === 'ACCUMULATION') score += 8;
+            else if (marketMakers.wyckoff.phase.includes('ACCUMULATION')) score += 5;
+            else if (marketMakers.wyckoff.phase === 'DISTRIBUTION') score -= 8;
+            else if (marketMakers.wyckoff.phase.includes('DISTRIBUTION')) score -= 5;
+            
+            if (marketMakers.vsa === 'STRONG BULLISH') score += 5;
+            else if (marketMakers.vsa === 'STRONG ABSORPTION') score += 4;
+            
+            if (smartMoney.bos.includes('STRONG BULLISH')) score += 5;
+            else if (smartMoney.bos.includes('BULLISH')) score += 3;
+            
+            if (smartMoney.zone === 'DISCOUNT') score += 5;
+            else if (smartMoney.zone === 'PREMIUM') score -= 3;
+            
+            if (pumpDump.strength > 90) score += 10;
+            else if (pumpDump.strength > 70) score += 5;
+            
+            if (trendBreak.signal.includes('BULLISH BREAKOUT')) score += 8;
+            else if (trendBreak.signal.includes('BULLISH BREAK')) score += 5;
+            
+            if (peaksAndDips.confidence > 80) score += peaksAndDips.signal.includes('BUY') ? 6 : -6;
+            
+            score = Math.max(0, Math.min(100, score));
+
+            let signal = 'NEUTRAL';
+            if (score >= 90) signal = '🔥🔥 ULTRA MEGA LONG';
+            else if (score >= 85) signal = '🔥 ULTRA STRONG LONG';
+            else if (score >= 75) signal = '💎 STRONG LONG';
+            else if (score >= 65) signal = '✅ MODERATE LONG';
+            else if (score >= 55) signal = '⚡ WEAK LONG';
+            else if (score <= 30) signal = '🔻 STRONG SHORT';
+            else if (score <= 40) signal = '⚠️ MODERATE SHORT';
+
+            const entry = p.price * 0.998;
+            const sl = entry - atr * 2.5;
+            const risk = entry - sl;
+
+            return {
+              symbol,
+              exchange,
+              color,
+              score,
+              signal,
+              price: p.price,
+              change: p.change,
+              high24h: p.high,
+              low24h: p.low,
+              indicators,
+              institutional,
+              whales,
+              marketMakers,
+              smartMoney,
+              traders,
+              liquidations,
+              fibonacci,
+              pumpDump,
+              trendBreak,
+              peaksAndDips,
+              entry: entry.toFixed(8),
+              tp1: (entry + risk * 1).toFixed(8),
+              tp2: (entry + risk * 2).toFixed(8),
+              tp3: (entry + risk * 3).toFixed(8),
+              sl: sl.toFixed(8),
+              rr: '1:3',
+              atr: atr.toFixed(8)
+            };
+          };
+
+          const startScan = async () => {
+            setScanning(true);
+            setProgress(0);
+            setResults([]);
+
+            try {
+              const symbols = await fetchSymbols();
+              setProgress(20);
+
+              const prices = await fetchPrices(symbols);
+              setProgress(40);
+
+              const analyzed = [];
+              const total = Math.min(80, symbols.length);
+              
+              for (let i = 0; i < total; i++) {
+                const result = await analyze(
+                  symbols[i].symbol, 
+                  symbols[i].exchange, 
+                  symbols[i].api, 
+                  prices,
+                  symbols[i].color
+                );
+                
+                if (result && result.score >= minScore) {
+                  analyzed.push(result);
+                }
+                setProgress(40 + Math.round((i / total) * 60));
+              }
+
+              analyzed.sort((a, b) => b.score - a.score);
+              setResults(analyzed);
+              setTab('results');
+            } catch (e) {
+              alert('Hata: ' + e.message);
+            }
+
+            setScanning(false);
+            setProgress(0);
+          };
+
+          const analyzeWithAI = async (coin) => {
+            setAnalyzing(true);
+            setAiAnalysis(null);
+
+            const langText = lang === 'de' ? 'DEUTSCH' : 'TÜRKÇE';
+
+            try {
+              const prompt = `Sen profesyonel kripto analistsin. Aşağıdaki verileri analiz et ve ${langText} dilinde DETAYLI analiz yap:
+
+🎯 ${coin.symbol}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 GENEL
+• Skor: ${coin.score}/100 (${coin.signal})
+• Fiyat: $${coin.price}
+• 24h Değişim: ${coin.change}%
+• 24h Yüksek: $${coin.high24h}
+• 24h Düşük: $${coin.low24h}
+
+📈 90 İNDİKATÖR ANALİZİ
+• Bull/Bear: ${coin.indicators.bull}/${coin.indicators.bear}
+• Trend Bull/Bear: ${coin.indicators.scores.trend.bull}/${coin.indicators.scores.trend.bear}
+• Momentum Bull/Bear: ${coin.indicators.scores.momentum.bull}/${coin.indicators.scores.momentum.bear}
+• Volume Bull/Bear: ${coin.indicators.scores.volume.bull}/${coin.indicators.scores.volume.bear}
+• Volatility Bull/Bear: ${coin.indicators.scores.volatility.bull}/${coin.indicators.scores.volatility.bear}
+• Institutional Bull/Bear: ${coin.indicators.scores.institutional.bull}/${coin.indicators.scores.institutional.bear}
+
+📊 TEKNİK İNDİKATÖRLER
+• RSI: ${coin.indicators.rsi}
+• MACD: ${coin.indicators.macd}
+• ADX: ${coin.indicators.adx}
+• Stochastic: ${coin.indicators.stoch}
+• MFI: ${coin.indicators.mfi}
+• CCI: ${coin.indicators.cci}
+
+🏢 KURUMSAL ANALİZ
+• Dark Pool: ${coin.institutional.darkPool}
+• Order Flow: ${coin.institutional.orderFlow}
+• Buy Pressure: ${coin.institutional.buyPressure}
+• Sell Pressure: ${coin.institutional.sellPressure}
+• Block Trades: ${coin.institutional.blockTrades}
+• Buy/Sell Ratio: ${coin.institutional.ratio}%
+
+🐋 WHALE ANALİZİ
+• Status: ${coin.whales.status}
+• Toplam Orders: ${coin.whales.orders}
+• Son Aktivite: ${coin.whales.recentOrders} orders
+• Buys/Sells: ${coin.whales.buys}/${coin.whales.sells}
+• Sentiment: ${coin.whales.sentiment}
+• Accumulation: ${coin.whales.accumulation}%
+• Distribution: ${coin.whales.distribution}%
+• Net Flow: ${coin.whales.netFlow}
+
+🎯 MARKET MAKERS (WYCKOFF & VSA)
+• Wyckoff Phase: ${coin.marketMakers.wyckoff.phase}
+• Position: ${coin.marketMakers.wyckoff.position}%
+• CVD Trend: ${coin.marketMakers.cvd.trend}
+• CVD Strength: ${coin.marketMakers.cvd.strength}
+• VSA: ${coin.marketMakers.vsa}
+• Volume Ratio: ${coin.marketMakers.volumeProfile.ratio}x
+
+💎 SMART MONEY CONCEPTS
+• BOS (Break of Structure): ${coin.smartMoney.bos}
+• CHoCH: ${coin.smartMoney.choch}
+• Zone: ${coin.smartMoney.zone}
+• Position: ${coin.smartMoney.position}%
+• Fair Value Gaps: ${coin.smartMoney.fvg.length} adet
+• Order Blocks: ${coin.smartMoney.orderBlocks.length} adet
+
+👥 TRADER ANALİZİ
+• Retail vs Institutional: ${coin.traders.retailRatio}% / ${coin.traders.ratio}%
+• Dominance: ${coin.traders.dominance}
+• Sentiment: ${coin.traders.sentiment}
+• Smart Money: ${coin.traders.smartMoney}
+
+🎯 STRATEJİK SINYALLER
+• Pump & Dump: ${coin.pumpDump.signal} (${coin.pumpDump.strength}/100)
+• Volume Spike: ${coin.pumpDump.volSpike}x
+• Trend Break: ${coin.trendBreak.signal}
+• Peaks & Dips: ${coin.peaksAndDips.signal} (Confidence: ${coin.peaksAndDips.confidence}%)
+
+💧 FİBONACCİ SEVİYELERİ
+• 0.236: $${coin.fibonacci['0.236']}
+• 0.382: $${coin.fibonacci['0.382']} ← Strong Buy Zone
+• 0.500: $${coin.fibonacci['0.500']}
+• 0.618: $${coin.fibonacci['0.618']} ← Golden Ratio
+• 0.786: $${coin.fibonacci['0.786']} ← Strong Sell Zone
+
+📍 İŞLEM SEVİYELERİ
+• Entry: $${coin.entry}
+• TP1: $${coin.tp1}
+• TP2: $${coin.tp2}
+• TP3: $${coin.tp3}
+• Stop Loss: $${coin.sl}
+• Risk/Reward: ${coin.rr}
+• ATR: $${coin.atr}
+
+💧 LİKİDASYON HARİTASI
+Long Liquidations:
+• Extreme: $${coin.liquidations.long.extreme}
+• High: $${coin.liquidations.long.high}
+• Medium: $${coin.liquidations.long.medium}
+
+Short Liquidations:
+• Extreme: $${coin.liquidations.short.extreme}
+• High: $${coin.liquidations.short.high}
+• Medium: $${coin.liquidations.short.medium}
+
+Buy Zone: $${coin.liquidations.zones.buyZone[0]} - $${coin.liquidations.zones.buyZone[1]}
+Sell Zone: $${coin.liquidations.zones.sellZone[0]} - $${coin.liquidations.zones.sellZone[1]}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DETAYLI ANALİZ ${langText}:
+
+1️⃣ 90 İNDİKATÖR DEĞERLENDİRMESİ:
+   - Trend, Momentum, Volume, Volatility, Institutional analizini yap
+   - Her kategorinin Bull/Bear oranını yorumla
+   - Teknik indikatörlerin (RSI, MACD, ADX, Stoch) birleşik mesajını açıkla
+
+2️⃣ KURUMSAL & WHALE & SMART MONEY:
+   - Dark Pool aktivitesi ve Order Flow'u yorumla
+   - Whale aktivitesi ve accumulation/distribution analizini yap
+   - Wyckoff fazı ve Market Maker stratejisini açıkla
+   - Smart Money Concepts (BOS, CHoCH, FVG, Order Blocks) değerlendirmesi
+   - CVD ve VSA sinyallerini yorumla
+
+3️⃣ STRATEJİK SINYALLER:
+   - Pump & Dump tespitini değerlendir
+   - Trend kırılımlarını analiz et
+   - Peak & Dip sinyallerini yorumla
+   - Fibonacci seviyelerine göre pozisyon analizi
+
+4️⃣ GİRİŞ STRATEJİSİ VE RİSK:
+   - Optimal giriş noktası ve nedenleri
+   - TP1/TP2/TP3 seviyelerinin mantığı
+   - Stop Loss yerleşimi ve risk yönetimi
+   - Likuidasyon seviyelerine dikkat edilmesi gereken noktalar
+
+5️⃣ SONUÇ VE TAVSİYE:
+   **📌 KARAR: [AL / SAT / BEKLE / GÜÇLÜ AL / GÜÇLÜ SAT]**
+   **⏰ ZAMAN: [HEMEN / 1-4 SAAT / 4-12 SAAT / 1-3 GÜN]**
+   **🎯 GÜVEN: [%XX]**
+   **⚠️ RİSK SEVİYESİ: [DÜŞÜK / ORTA / YÜKSEK]**
+   
+   Net ve anlaşılır şekilde AL/SAT/BEKLE kararını ver ve nedenlerini açıkla.
+
+PROFESYONEL, DETAYLI ve SOMUT ANALİZ YAP!`;
+
+              const response = await fetch(GROQ_CONFIG.url, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${GROQ_CONFIG.apiKey}`
+                },
+                body: JSON.stringify({
+                  model: GROQ_CONFIG.model,
+                  messages: [
+                    { 
+                      role: 'system', 
+                      content: `Sen profesyonel kripto para analisti ve trader'sın. ${langText} dilinde detaylı, profesyonel ve anlaşılır analizler yaparsın. 90 indikatör, kurumsal analiz, whale tracking, smart money concepts ve tüm stratejik sinyalleri değerlendirerek kesin AL/SAT/BEKLE kararı verirsin.` 
+                    },
+                    { role: 'user', content: prompt }
+                  ],
+                  temperature: 0.7,
+                  max_tokens: 3000
+                })
+              });
+
+              if (!response.ok) {
+                throw new Error(`API Error: ${response.status}`);
+              }
+
+              const data = await response.json();
+              if (data.choices && data.choices[0] && data.choices[0].message) {
+                setAiAnalysis(data.choices[0].message.content);
+              } else {
+                throw new Error('Invalid API response');
+              }
+            } catch (e) {
+              setAiAnalysis(`❌ AI Analiz Hatası: ${e.message}\n\nLütfen tekrar deneyin.`);
+            }
+
+            setAnalyzing(false);
+          };
+
+          const sendToTelegram = async (coin) => {
+            if (!aiAnalysis) {
+              alert(lang === 'de' ? 'Bitte zuerst AI-Analyse durchführen!' : 'Önce AI analizi yapın!');
+              return;
+            }
+
+            setSendingTelegram(true);
+
+            try {
+              // Telegram için optimize edilmiş mesaj
+              const message = `🔥 YasarAI ULTRA SCAN SONUCU 🔥
+
+📊 ${coin.symbol}
+━━━━━━━━━━━━━━━━━━━━━━
+💯 SKOR: ${coin.score}/100
+${coin.signal}
+
+💰 FİYAT: ${coin.price}
+📈 24h: ${coin.change >= 0 ? '+' : ''}${coin.change.toFixed(2)}%
+📊 High: ${coin.high24h} | Low: ${coin.low24h}
+
+🎯 İŞLEM SEVİYELERİ:
+━━━━━━━━━━━━━━━━━━━━━━
+📍 Entry: ${coin.entry}
+✅ TP1: ${coin.tp1}
+✅ TP2: ${coin.tp2}
+✅ TP3: ${coin.tp3}
+🛑 Stop Loss: ${coin.sl}
+⚡ Risk/Reward: ${coin.rr}
+📏 ATR: ${coin.atr}
+
+📊 90 İNDİKATÖR ANALİZİ:
+━━━━━━━━━━━━━━━━━━━━━━
+🟢 Bull: ${coin.indicators.bull} | 🔴 Bear: ${coin.indicators.bear}
+📈 RSI: ${coin.indicators.rsi}
+📊 MACD: ${coin.indicators.macd}
+⚡ ADX: ${coin.indicators.adx}
+📈 Stoch: ${coin.indicators.stoch}
+💰 MFI: ${coin.indicators.mfi}
+
+🏢 KURUMSAL ANALİZ:
+━━━━━━━━━━━━━━━━━━━━━━
+🌊 Dark Pool: ${coin.institutional.darkPool}
+📈 Order Flow: ${coin.institutional.orderFlow}
+📦 Block Trades: ${coin.institutional.blockTrades}
+💹 Buy/Sell Ratio: ${coin.institutional.ratio}%
+🟢 Buy Pressure: ${coin.institutional.buyPressure}
+🔴 Sell Pressure: ${coin.institutional.sellPressure}
+
+🐋 WHALE ANALİZİ:
+━━━━━━━━━━━━━━━━━━━━━━
+📊 Status: ${coin.whales.status}
+🎯 Sentiment: ${coin.whales.sentiment}
+📈 Accumulation: ${coin.whales.accumulation}%
+📉 Distribution: ${coin.whales.distribution}%
+🔢 Total Orders: ${coin.whales.orders}
+📍 Recent: ${coin.whales.recentOrders} orders
+💰 Buys/Sells: ${coin.whales.buys}/${coin.whales.sells}
+💸 Net Flow: ${coin.whales.netFlow}
+
+💎 SMART MONEY CONCEPTS:
+━━━━━━━━━━━━━━━━━━━━━━
+🔥 BOS: ${coin.smartMoney.bos}
+⚡ CHoCH: ${coin.smartMoney.choch}
+🎯 Zone: ${coin.smartMoney.zone}
+📍 Position: ${coin.smartMoney.position}%
+📊 FVG: ${coin.smartMoney.fvg.length} gaps
+🔰 Order Blocks: ${coin.smartMoney.orderBlocks.length} blocks
+
+🎯 MARKET MAKERS:
+━━━━━━━━━━━━━━━━━━━━━━
+📈 Wyckoff: ${coin.marketMakers.wyckoff.phase}
+📍 Position: ${coin.marketMakers.wyckoff.position}%
+📊 CVD: ${coin.marketMakers.cvd.trend}
+💪 CVD Strength: ${coin.marketMakers.cvd.strength}
+🔍 VSA: ${coin.marketMakers.vsa}
+📊 Vol Ratio: ${coin.marketMakers.volumeProfile.ratio}x
+
+👥 TRADER ANALİZİ:
+━━━━━━━━━━━━━━━━━━━━━━
+🏪 Retail: ${coin.traders.retailRatio}%
+🏢 Institutional: ${coin.traders.ratio}%
+👑 Dominance: ${coin.traders.dominance}
+📊 Sentiment: ${coin.traders.sentiment}
+💰 Smart Money: ${coin.traders.smartMoney}
+
+🎯 STRATEJİK SİNYALLER:
+━━━━━━━━━━━━━━━━━━━━━━
+🚀 Pump&Dump: ${coin.pumpDump.signal}
+   Strength: ${coin.pumpDump.strength}/100
+   Vol Spike: ${coin.pumpDump.volSpike}x
+📈 Trend Break: ${coin.trendBreak.signal}
+   Pivots: ${coin.trendBreak.pivotHighs}H/${coin.trendBreak.pivotLows}L
+🎯 Peaks&Dips: ${coin.peaksAndDips.signal}
+   Confidence: ${coin.peaksAndDips.confidence}%
+
+💧 LİKİDASYON SEVİYELERİ:
+━━━━━━━━━━━━━━━━━━━━━━
+🔻 LONG LİKİDASYONLARI:
+   Extreme: ${coin.liquidations.long.extreme}
+   High: ${coin.liquidations.long.high}
+   Medium: ${coin.liquidations.long.medium}
+   Cluster: ${coin.liquidations.long.cluster}
+   Support: ${coin.liquidations.long.support}
+
+🔺 SHORT LİKİDASYONLARI:
+   Extreme: ${coin.liquidations.short.extreme}
+   High: ${coin.liquidations.short.high}
+   Medium: ${coin.liquidations.short.medium}
+   Cluster: ${coin.liquidations.short.cluster}
+   Resistance: ${coin.liquidations.short.resistance}
+
+💧 FİBONACCİ SEVİYELERİ:
+━━━━━━━━━━━━━━━━━━━━━━
+0.236: ${coin.fibonacci['0.236']}
+0.382: ${coin.fibonacci['0.382']} ⭐ Strong Buy
+0.500: ${coin.fibonacci['0.500']}
+0.618: ${coin.fibonacci['0.618']} ⭐ Golden Ratio
+0.786: ${coin.fibonacci['0.786']} ⭐ Strong Sell
+
+🤖 AI ANALİZ ÖZETİ:
+━━━━━━━━━━━━━━━━━━━━━━
+${aiAnalysis.substring(0, 500)}...
+
+━━━━━━━━━━━━━━━━━━━━━━
+⚡ YasarAI ULTRA PRO MAX V4
+📊 90 İNDİKATÖR • 🏢 5 BORSA • 🤖 GROQ AI
+🌐 ${coin.exchange} | ⏰ ${timeframe}`;
+
+              // Telegram Bot API'sine mesaj gönder
+              const telegramUrl = `https://api.telegram.org/bot${TELEGRAM_CONFIG.botToken}/sendMessage`;
+              
+              const response = await fetch(telegramUrl, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  chat_id: TELEGRAM_CONFIG.chatId,
+                  text: message,
+                  parse_mode: 'HTML'
+                })
+              });
+
+              const data = await response.json();
+
+              if (data.ok) {
+                alert('✅ ' + (lang === 'de' ? 'Erfolgreich an Telegram gesendet!' : 'Telegram\'a başarıyla gönderildi!'));
+              } else {
+                throw new Error(data.description || 'Telegram API error');
+              }
+            } catch (e) {
+              alert('❌ Telegram Hatası: ' + e.message);
+              console.error('Telegram error:', e);
+            }
+
+            setSendingTelegram(false);
+          };
+
+          const getCategoryStyles = (colorName) => {
+            const styles = {
+              blue: { border: 'border-blue-500', bg: 'bg-blue-600', text: 'text-blue-400', bgDark: 'bg-blue-900' },
+              purple: { border: 'border-purple-500', bg: 'bg-purple-600', text: 'text-purple-400', bgDark: 'bg-purple-900' },
+              green: { border: 'border-green-500', bg: 'bg-green-600', text: 'text-green-400', bgDark: 'bg-green-900' },
+              orange: { border: 'border-orange-500', bg: 'bg-orange-600', text: 'text-orange-400', bgDark: 'bg-orange-900' },
+              cyan: { border: 'border-cyan-500', bg: 'bg-cyan-600', text: 'text-cyan-400', bgDark: 'bg-cyan-900' },
+              yellow: { border: 'border-yellow-500', bg: 'bg-yellow-600', text: 'text-yellow-400', bgDark: 'bg-yellow-900' }
+            };
+            return styles[colorName] || styles.blue;
+          };
+
+          return (
+            <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 text-white">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 p-6 shadow-2xl">
+                <div className="max-w-7xl mx-auto">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h1 className="text-5xl font-black mb-2 bg-clip-text text-transparent bg-gradient-to-r from-yellow-200 to-pink-200">
+                        🔥 YasarAI ULTRA PRO MAX V4
+                      </h1>
+                      <p className="text-cyan-200 text-sm">
+                        90 GERÇEK İNDİKATÖR • 5 BORSA • SMART MONEY • WYCKOFF • VSA • GROQ AI
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setLang('tr')}
+                        className={`px-4 py-2 rounded-lg font-bold transition-all ${
+                          lang === 'tr' ? 'bg-green-600 scale-110' : 'bg-gray-700 hover:bg-gray-600'
+                        }`}
+                      >
+                        🇹🇷 TR
+                      </button>
+                      <button
+                        onClick={() => setLang('de')}
+                        className={`px-4 py-2 rounded-lg font-bold transition-all ${
+                          lang === 'de' ? 'bg-green-600 scale-110' : 'bg-gray-700 hover:bg-gray-600'
+                        }`}
+                      >
+                        🇩🇪 DE
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 flex-wrap">
+                    <span className="px-3 py-1 bg-green-600 rounded-full text-xs font-bold">✅ 90 İNDİKATÖR</span>
+                    <span className="px-3 py-1 bg-blue-600 rounded-full text-xs font-bold">🏢 KURUMSAL</span>
+                    <span className="px-3 py-1 bg-yellow-600 rounded-full text-xs font-bold">🐋 WHALE</span>
+                    <span className="px-3 py-1 bg-purple-600 rounded-full text-xs font-bold">💎 SMART MONEY</span>
+                    <span className="px-3 py-1 bg-orange-600 rounded-full text-xs font-bold">📊 WYCKOFF</span>
+                    <span className="px-3 py-1 bg-cyan-600 rounded-full text-xs font-bold">🤖 AI</span>
+                    <span className="px-3 py-1 bg-pink-600 rounded-full text-xs font-bold">🚀 PUMP & DUMP</span>
+                    <span className="px-3 py-1 bg-indigo-600 rounded-full text-xs font-bold">📈 FIBONACCI</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Navigation */}
+              <div className="bg-gray-800 border-b border-gray-700">
+                <div className="max-w-7xl mx-auto px-4">
+                  <div className="flex gap-2 py-3 overflow-x-auto">
+                    {['scan', 'indicators', 'exchanges', 'strategies', 'results'].map(tabName => (
+                      <button
+                        key={tabName}
+                        onClick={() => setTab(tabName)}
+                        className={`px-6 py-3 rounded-lg font-bold whitespace-nowrap transition-all ${
+                          tab === tabName 
+                            ? 'bg-gradient-to-r from-purple-600 to-blue-600 scale-105' 
+                            : 'bg-gray-700 hover:bg-gray-600'
+                        }`}
+                      >
+                        {t[tabName] || tabName.toUpperCase()}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Main Content */}
+              <div className="max-w-7xl mx-auto px-4 py-6">
+                {tab === 'scan' && !selected && (
+                  <div className="space-y-6">
+                    <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 shadow-xl border border-gray-700">
+                      <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                        <Activity />
+                        ⏰ {t.timeframe}: {timeframe}
+                      </h3>
+                      <div className="grid grid-cols-4 md:grid-cols-7 gap-3">
+                        {['1m', '5m', '15m', '30m', '1h', '4h', '1d'].map(tf => (
+                          <button
+                            key={tf}
+                            onClick={() => setTimeframe(tf)}
+                            className={`py-3 rounded-lg font-bold transition-all ${
+                              timeframe === tf 
+                                ? 'bg-gradient-to-r from-blue-600 to-cyan-600 scale-105' 
+                                : 'bg-gray-700 hover:bg-gray-600'
+                            }`}
+                          >
+                            {tf}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 shadow-xl border border-gray-700">
+                      <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                        <Target />
+                        🎯 {t.minScore}: {minScore}%
+                      </h3>
+                      <input
+                        type="range"
+                        min="60"
+                        max="95"
+                        value={minScore}
+                        onChange={e => setMinScore(parseInt(e.target.value))}
+                        className="w-full h-3 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                        style={{
+                          background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${(minScore - 60) / 0.35}%, #374151 ${(minScore - 60) / 0.35}%, #374151 100%)`
+                        }}
+                      />
+                      <div className="flex justify-between text-sm text-gray-400 mt-2">
+                        <span>60%</span>
+                        <span>95%</span>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={startScan}
+                      disabled={scanning}
+                      className={`w-full bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 py-6 rounded-2xl font-black text-2xl shadow-2xl transition-all ${
+                        scanning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 hover:shadow-3xl'
+                      }`}
+                    >
+                      {scanning ? `⏳ ${t.scanning}... ${progress}%` : `🚀 ${t.startScan}`}
+                    </button>
+
+                    {scanning && (
+                      <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 shadow-xl border border-gray-700">
+                        <div className="w-full bg-gray-700 rounded-full h-6 overflow-hidden">
+                          <div
+                            className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 h-6 rounded-full transition-all duration-300 flex items-center justify-center text-xs font-bold"
+                            style={{ width: `${progress}%` }}
+                          >
+                            {progress}%
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {tab === 'indicators' && (
+                  <div className="space-y-6">
+                    <div className="bg-gradient-to-r from-blue-900 to-purple-900 rounded-2xl p-6 shadow-xl">
+                      <h2 className="text-3xl font-black mb-2">📊 90 {t.indicators}</h2>
+                      <p className="text-cyan-300">Tüm indikatörler gerçek zamanlı matematiksel olarak hesaplanıyor!</p>
+                    </div>
+
+                    {Object.values(INDICATORS_INFO).map(category => {
+                      const styles = getCategoryStyles(category.color);
+                      return (
+                        <div key={category.name} className={`bg-gray-800 rounded-2xl p-6 shadow-xl border-2 ${styles.border}`}>
+                          <div className="flex justify-between items-center mb-4">
+                            <div>
+                              <h3 className="text-2xl font-bold flex items-center gap-2">
+                                {category.emoji} {category.name}
+                              </h3>
+                            </div>
+                            <div className={`${styles.bg} px-4 py-2 rounded-full text-2xl font-black`}>
+                              {category.total}
+                            </div>
+                          </div>
+                          <div className="grid md:grid-cols-3 gap-3 mt-4">
+                            {category.indicators.map((ind, idx) => (
+                              <div key={idx} className={`${styles.bgDark} rounded-lg p-3 border border-gray-700`}>
+                                <div className={`font-bold text-sm ${styles.text}`}>{ind}</div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {tab === 'exchanges' && (
+                  <div className="space-y-6">
+                    <div className="bg-gradient-to-r from-yellow-900 to-orange-900 rounded-2xl p-6 shadow-xl">
+                      <h2 className="text-3xl font-black mb-2">🏛️ {t.exchanges}</h2>
+                      <p className="text-yellow-300">Taramak istediğiniz borsaları seçin - {enabledExchanges.length}/5 Aktif</p>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {EXCHANGES.map(ex => {
+                        const styles = getCategoryStyles(ex.color);
+                        const isEnabled = enabledExchanges.includes(ex.id);
+                        return (
+                          <div
+                            key={ex.id}
+                            className={`bg-gray-800 rounded-xl p-6 cursor-pointer border-2 transition-all ${
+                              isEnabled ? `${styles.border} scale-105` : 'border-gray-700 hover:border-gray-600'
+                            }`}
+                            onClick={() => {
+                              setEnabledExchanges(prev =>
+                                prev.includes(ex.id) ? prev.filter(id => id !== ex.id) : [...prev, ex.id]
+                              );
+                            }}
+                          >
+                            <div className="flex justify-between items-center">
+                              <div>
+                                <h3 className="text-2xl font-bold">{ex.name}</h3>
+                                <p className="text-sm text-gray-400 mt-1">{ex.api.replace('https://', '')}</p>
+                              </div>
+                              <div className="text-4xl">
+                                {isEnabled ? '✅' : '⬜'}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {tab === 'strategies' && (
+                  <div className="space-y-6">
+                    <div className="bg-gradient-to-r from-purple-900 to-pink-900 rounded-2xl p-6 shadow-xl">
+                      <h2 className="text-3xl font-black mb-2">🎯 {t.strategies}</h2>
+                      <p className="text-purple-300">Gelişmiş strateji ve analiz sistemleri</p>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="bg-gradient-to-br from-red-900 to-orange-900 rounded-xl p-6 shadow-xl border border-orange-500">
+                        <h3 className="text-2xl font-bold mb-3 flex items-center gap-2">
+                          <Zap />
+                          {t.pumpDump}
+                        </h3>
+                        <p className="text-sm text-gray-300 mb-4">
+                          Bollinger Bands, ADX ve hacim analiziyle pump & dump hareketlerini tespit eder
+                        </p>
+                        <ul className="space-y-2 text-sm">
+                          <li>✅ Bollinger Band kırılımları</li>
+                          <li>✅ Hacim spike tespiti (1.5x-3x)</li>
+                          <li>✅ ADX trend gücü ölçümü</li>
+                          <li>✅ Otomatik güç skoru (0-100)</li>
+                        </ul>
+                      </div>
+
+                      <div className="bg-gradient-to-br from-blue-900 to-cyan-900 rounded-xl p-6 shadow-xl border border-cyan-500">
+                        <h3 className="text-2xl font-bold mb-3 flex items-center gap-2">
+                          <LineChart />
+                          {t.trendBreak}
+                        </h3>
+                        <p className="text-sm text-gray-300 mb-4">
+                          Otomatik trend çizgileri ve kırılım tespiti ile giriş sinyalleri
+                        </p>
+                        <ul className="space-y-2 text-sm">
+                          <li>✅ Otomatik pivot noktaları</li>
+                          <li>✅ Trend çizgisi oluşturma</li>
+                          <li>✅ Kırılım algılama</li>
+                          <li>✅ Bullish/Bearish breakout</li>
+                        </ul>
+                      </div>
+
+                      <div className="bg-gradient-to-br from-purple-900 to-pink-900 rounded-xl p-6 shadow-xl border border-pink-500">
+                        <h3 className="text-2xl font-bold mb-3 flex items-center gap-2">
+                          <Target />
+                          {t.peaks}
+                        </h3>
+                        <p className="text-sm text-gray-300 mb-4">
+                          RSI ve Fibonacci ile tepe/dip noktalarını yakalama
+                        </p>
+                        <ul className="space-y-2 text-sm">
+                          <li>✅ RSI aşırı alım/satım (30/70)</li>
+                          <li>✅ Fibonacci 0.382/0.618 seviyeleri</li>
+                          <li>✅ EMA trend konfirmasyonu</li>
+                          <li>✅ Güven skoru (%60-100)</li>
+                        </ul>
+                      </div>
+
+                      <div className="bg-gradient-to-br from-green-900 to-emerald-900 rounded-xl p-6 shadow-xl border border-emerald-500">
+                        <h3 className="text-2xl font-bold mb-3 flex items-center gap-2">
+                          <DollarSign />
+                          {t.fibonacci}
+                        </h3>
+                        <p className="text-sm text-gray-300 mb-4">
+                          Altın oran ile destek/direnç seviyeleri ve hedef fiyatlar
+                        </p>
+                        <ul className="space-y-2 text-sm">
+                          <li>✅ 9 Fibonacci seviyesi (0.0-1.618)</li>
+                          <li>✅ Otomatik buy/sell zone</li>
+                          <li>✅ Strong buy/sell bölgeleri</li>
+                          <li>✅ Likuidasyon entegrasyonu</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {tab === 'results' && !selected && (
+                  <div className="space-y-4">
+                    <button
+                      onClick={() => setTab('scan')}
+                      className="bg-gray-700 px-6 py-3 rounded-lg font-bold hover:bg-gray-600 transition-all"
+                    >
+                      ← {lang === 'de' ? 'Zurück zum Scan' : 'Taramaya Dön'}
+                    </button>
+
+                    {results.length === 0 ? (
+                      <div className="bg-gray-800 rounded-2xl p-12 text-center">
+                        <div className="text-6xl mb-4">🔍</div>
+                        <h3 className="text-2xl font-bold mb-2">
+                          {lang === 'de' ? 'Keine Ergebnisse gefunden' : 'Sonuç Bulunamadı'}
+                        </h3>
+                        <p className="text-gray-400">
+                          {lang === 'de' 
+                            ? 'Versuchen Sie, den Mindestscore zu senken oder einen anderen Zeitrahmen zu wählen'
+                            : 'Minimum skoru düşürün veya farklı bir zaman dilimi deneyin'}
+                        </p>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="bg-gradient-to-r from-green-900 to-emerald-900 rounded-2xl p-6 shadow-xl border border-green-500">
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <h2 className="text-3xl font-bold">
+                                🎯 {results.length} {lang === 'de' ? 'Coins gefunden' : 'Coin Bulundu'}
+                              </h2>
+                              <p className="text-green-300 mt-1">
+                                {lang === 'de' ? 'Sortiert nach Score' : 'Skora göre sıralandı'}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-sm text-gray-300">
+                                {lang === 'de' ? 'Durchschnitt' : 'Ortalama'}
+                              </div>
+                              <div className="text-3xl font-bold text-green-400">
+                                {(results.reduce((sum, r) => sum + r.score, 0) / results.length).toFixed(0)}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {results.map((r, idx) => {
+                          const styles = getCategoryStyles(r.color);
+                          return (
+                            <div
+                              key={idx}
+                              className={`bg-gray-800 rounded-2xl p-6 cursor-pointer hover:bg-gray-750 shadow-xl border-2 transition-all hover:scale-102 ${styles.border}`}
+                              onClick={() => setSelected(r)}
+                            >
+                              <div className="flex justify-between items-start">
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-3 mb-3">
+                                    <span className="text-3xl font-black">{r.symbol.replace('USDT', '')}</span>
+                                    <span className={`px-3 py-1 ${styles.bg} rounded-full text-xs font-bold`}>
+                                      {r.exchange}
+                                    </span>
+                                    {r.score >= 85 && <span className="text-2xl">🔥</span>}
+                                  </div>
+                                  
+                                  <div className="grid grid-cols-2 gap-4 mb-3">
+                                    <div>
+                                      <div className="text-xs text-gray-400">{lang === 'de' ? 'Preis' : 'Fiyat'}</div>
+                                      <div className="text-2xl text-green-400 font-bold">${r.price.toFixed(6)}</div>
+                                    </div>
+                                    <div>
+                                      <div className="text-xs text-gray-400">24h {lang === 'de' ? 'Änderung' : 'Değişim'}</div>
+                                      <div className={`text-2xl font-bold ${r.change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                                        {r.change >= 0 ? '+' : ''}{r.change.toFixed(2)}%
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div className="grid grid-cols-3 gap-2 text-xs">
+                                    <div className="bg-blue-900 bg-opacity-50 rounded p-2">
+                                      <div className="text-gray-400">Dark Pool</div>
+                                      <div className="font-bold">{r.institutional.darkPool}</div>
+                                    </div>
+                                    <div className="bg-yellow-900 bg-opacity-50 rounded p-2">
+                                      <div className="text-gray-400">Whale</div>
+                                      <div className="font-bold">{r.whales.status}</div>
+                                    </div>
+                                    <div className="bg-purple-900 bg-opacity-50 rounded p-2">
+                                      <div className="text-gray-400">Zone</div>
+                                      <div className="font-bold">{r.smartMoney.zone}</div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div className="text-right ml-6">
+                                  <div className="text-7xl font-black text-green-400 mb-2">{r.score}</div>
+                                  <div className="text-lg font-bold mb-2">{r.signal}</div>
+                                  <div className="text-xs text-gray-400">
+                                    {lang === 'de' ? 'Klicken für Details' : 'Detaylar için tıkla'}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </>
+                    )}
+                  </div>
+                )}
+
+                {selected && (
+                  <div className="fixed inset-0 bg-black bg-opacity-95 z-50 overflow-y-auto p-4">
+                    <div className="max-w-6xl mx-auto bg-gray-900 rounded-2xl p-6 my-8 border border-gray-700">
+                      <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-700">
+                        <div>
+                          <h2 className="text-4xl font-black flex items-center gap-3">
+                            {selected.symbol}
+                            <span className={`px-3 py-1 ${getCategoryStyles(selected.color).bg} rounded-full text-sm`}>
+                              {selected.exchange}
+                            </span>
+                          </h2>
+                          <div className="text-3xl font-bold text-green-400 mt-2">${selected.price.toFixed(6)}</div>
+                        </div>
+                        <button
+                          onClick={() => {
+                            setSelected(null);
+                            setAiAnalysis(null);
+                          }}
+                          className="text-5xl hover:text-red-500 transition-colors"
+                        >
+                          ×
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+                        <div className="bg-gradient-to-br from-green-600 to-emerald-600 rounded-xl p-4 text-center">
+                          <div className="text-xs">{lang === 'de' ? 'SCORE' : 'SKOR'}</div>
+                          <div className="text-5xl font-black">{selected.score}</div>
+                        </div>
+                        <div className="bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl p-4 text-center">
+                          <div className="text-xs">24H</div>
+                          <div className={`text-2xl font-bold ${selected.change >= 0 ? 'text-green-200' : 'text-red-200'}`}>
+                            {selected.change >= 0 ? '+' : ''}{selected.change.toFixed(2)}%
+                          </div>
+                        </div>
+                        <div className="bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl p-4 text-center">
+                          <div className="text-xs">DARK POOL</div>
+                          <div className="text-xl font-bold">{selected.institutional.darkPool}</div>
+                        </div>
+                        <div className="bg-gradient-to-br from-yellow-600 to-orange-600 rounded-xl p-4 text-center">
+                          <div className="text-xs">WHALE</div>
+                          <div className="text-xl font-bold">{selected.whales.status}</div>
+                        </div>
+                        <div className="bg-gradient-to-br from-cyan-600 to-blue-600 rounded-xl p-4 text-center">
+                          <div className="text-xs">ZONE</div>
+                          <div className="text-xl font-bold">{selected.smartMoney.zone}</div>
+                        </div>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-6 mb-6">
+                        <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                          <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                            <Target />
+                            {lang === 'de' ? 'LEVELS' : 'SEVİYELER'}
+                          </h3>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between bg-blue-900 bg-opacity-50 p-3 rounded border border-blue-700">
+                              <span className="font-bold">{t.entry}:</span>
+                              <span className="font-mono">${selected.entry}</span>
+                            </div>
+                            <div className="flex justify-between bg-green-900 bg-opacity-50 p-3 rounded border border-green-700">
+                              <span className="font-bold">TP1:</span>
+                              <span className="font-mono">${selected.tp1}</span>
+                            </div>
+                            <div className="flex justify-between bg-green-800 bg-opacity-50 p-3 rounded border border-green-600">
+                              <span className="font-bold">TP2:</span>
+                              <span className="font-mono">${selected.tp2}</span>
+                            </div>
+                            <div className="flex justify-between bg-green-700 bg-opacity-50 p-3 rounded border border-green-500">
+                              <span className="font-bold">TP3:</span>
+                              <span className="font-mono">${selected.tp3}</span>
+                            </div>
+                            <div className="flex justify-between bg-red-900 bg-opacity-50 p-3 rounded border-2 border-red-500">
+                              <span className="font-bold">SL:</span>
+                              <span className="font-mono">${selected.sl}</span>
+                            </div>
+                            <div className="flex justify-between bg-purple-900 bg-opacity-50 p-3 rounded border border-purple-700">
+                              <span className="font-bold">R/R:</span>
+                              <span className="font-bold text-purple-300">{selected.rr}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                          <h3 className="text-xl font-bold mb-4">📊 90 İNDİKATÖR</h3>
+                          <div className="space-y-3">
+                            <div className="flex justify-between items-center">
+                              <span>Bull/Bear:</span>
+                              <div className="flex gap-2">
+                                <span className="text-green-400 font-bold">{selected.indicators.bull}</span>
+                                <span className="text-gray-500">/</span>
+                                <span className="text-red-400 font-bold">{selected.indicators.bear}</span>
+                              </div>
+                            </div>
+                            {Object.entries(selected.indicators.scores).map(([key, val]) => (
+                              <div key={key} className="bg-gray-900 bg-opacity-50 rounded p-2">
+                                <div className="flex justify-between text-xs text-gray-400 mb-1">
+                                  <span>{key.toUpperCase()}</span>
+                                  <span>{val.bull}/{val.bear}</span>
+                                </div>
+                                <div className="w-full bg-gray-700 rounded-full h-2">
+                                  <div
+                                    className="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full"
+                                    style={{ width: `${(val.bull / (val.bull + val.bear)) * 100}%` }}
+                                  />
+                                </div>
+                              </div>
+                            ))}
+                            <div className="grid grid-cols-3 gap-2 text-xs mt-3">
+                              <div className="bg-blue-900 bg-opacity-50 p-2 rounded">
+                                <div className="text-gray-400">RSI</div>
+                                <div className="font-bold">{selected.indicators.rsi}</div>
+                              </div>
+                              <div className="bg-purple-900 bg-opacity-50 p-2 rounded">
+                                <div className="text-gray-400">ADX</div>
+                                <div className="font-bold">{selected.indicators.adx}</div>
+                              </div>
+                              <div className="bg-green-900 bg-opacity-50 p-2 rounded">
+                                <div className="text-gray-400">MFI</div>
+                                <div className="font-bold">{selected.indicators.mfi}</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                          <h3 className="text-xl font-bold mb-4">🎯 STRATEJİK SİNYALLER</h3>
+                          <div className="space-y-3">
+                            <div className="bg-gradient-to-r from-red-900 to-orange-900 bg-opacity-50 p-3 rounded border border-orange-700">
+                              <div className="text-xs text-gray-400">Pump & Dump</div>
+                              <div className="font-bold text-lg">{selected.pumpDump.signal}</div>
+                              <div className="text-xs text-gray-300 mt-1">
+                                Strength: {selected.pumpDump.strength}/100 • Vol: {selected.pumpDump.volSpike}x
+                              </div>
+                            </div>
+                            <div className="bg-gradient-to-r from-blue-900 to-cyan-900 bg-opacity-50 p-3 rounded border border-cyan-700">
+                              <div className="text-xs text-gray-400">Trend Break</div>
+                              <div className="font-bold text-lg">{selected.trendBreak.signal}</div>
+                              <div className="text-xs text-gray-300 mt-1">
+                                Pivots: {selected.trendBreak.pivotHighs}H / {selected.trendBreak.pivotLows}L
+                              </div>
+                            </div>
+                            <div className="bg-gradient-to-r from-purple-900 to-pink-900 bg-opacity-50 p-3 rounded border border-pink-700">
+                              <div className="text-xs text-gray-400">Peaks & Dips</div>
+                              <div className="font-bold text-lg">{selected.peaksAndDips.signal}</div>
+                              <div className="text-xs text-gray-300 mt-1">
+                                Confidence: {selected.peaksAndDips.confidence}% • RSI: {selected.peaksAndDips.rsi}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                          <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                            <Waves />
+                            {t.fibonacci}
+                          </h3>
+                          <div className="space-y-2 text-sm">
+                            {Object.entries(selected.fibonacci).map(([level, price]) => (
+                              <div key={level} className="flex justify-between bg-gray-900 bg-opacity-50 p-2 rounded">
+                                <span className="text-gray-400">{level}:</span>
+                                <span className="font-mono">${price}</span>
+                              </div>
+                            ))}
+                            <div className="mt-4 pt-4 border-t border-gray-700">
+                              <div className="bg-green-900 bg-opacity-30 p-2 rounded mb-2">
+                                <div className="text-xs text-gray-400">Buy Zone</div>
+                                <div className="font-mono text-xs">
+                                  ${selected.liquidations.zones.buyZone[0]} - ${selected.liquidations.zones.buyZone[1]}
+                                </div>
+                              </div>
+                              <div className="bg-red-900 bg-opacity-30 p-2 rounded">
+                                <div className="text-xs text-gray-400">Sell Zone</div>
+                                <div className="font-mono text-xs">
+                                  ${selected.liquidations.zones.sellZone[0]} - ${selected.liquidations.zones.sellZone[1]}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="grid md:grid-cols-3 gap-6 mb-6">
+                        <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                          <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                            <Building2 />
+                            {t.institutional}
+                          </h3>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between p-2 bg-gray-900 bg-opacity-50 rounded">
+                              <span>Dark Pool:</span>
+                              <span className="font-bold">{selected.institutional.darkPool}</span>
+                            </div>
+                            <div className="flex justify-between p-2 bg-gray-900 bg-opacity-50 rounded">
+                              <span>Order Flow:</span>
+                              <span className="font-bold">{selected.institutional.orderFlow}</span>
+                            </div>
+                            <div className="flex justify-between p-2 bg-gray-900 bg-opacity-50 rounded">
+                              <span>Block Trades:</span>
+                              <span className="font-bold">{selected.institutional.blockTrades}</span>
+                            </div>
+                            <div className="flex justify-between p-2 bg-gray-900 bg-opacity-50 rounded">
+                              <span>Buy Pressure:</span>
+                              <span className="font-bold text-green-400">{selected.institutional.buyPressure}</span>
+                            </div>
+                            <div className="flex justify-between p-2 bg-gray-900 bg-opacity-50 rounded">
+                              <span>Sell Pressure:</span>
+                              <span className="font-bold text-red-400">{selected.institutional.sellPressure}</span>
+                            </div>
+                            <div className="flex justify-between p-2 bg-blue-900 bg-opacity-50 rounded border border-blue-700">
+                              <span>Buy/Sell Ratio:</span>
+                              <span className="font-bold">{selected.institutional.ratio}%</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                          <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                            <Fish />
+                            {t.whales}
+                          </h3>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between p-2 bg-gray-900 bg-opacity-50 rounded">
+                              <span>Status:</span>
+                              <span className="font-bold">{selected.whales.status}</span>
+                            </div>
+                            <div className="flex justify-between p-2 bg-gray-900 bg-opacity-50 rounded">
+                              <span>Total Orders:</span>
+                              <span className="font-bold">{selected.whales.orders}</span>
+                            </div>
+                            <div className="flex justify-between p-2 bg-gray-900 bg-opacity-50 rounded">
+                              <span>Recent Orders:</span>
+                              <span className="font-bold">{selected.whales.recentOrders}</span>
+                            </div>
+                            <div className="flex justify-between p-2 bg-gray-900 bg-opacity-50 rounded">
+                              <span>Sentiment:</span>
+                              <span className="font-bold">{selected.whales.sentiment}</span>
+                            </div>
+                            <div className="flex justify-between p-2 bg-green-900 bg-opacity-50 rounded">
+                              <span>Accumulation:</span>
+                              <span className="font-bold text-green-400">{selected.whales.accumulation}%</span>
+                            </div>
+                            <div className="flex justify-between p-2 bg-red-900 bg-opacity-50 rounded">
+                              <span>Distribution:</span>
+                              <span className="font-bold text-red-400">{selected.whales.distribution}%</span>
+                            </div>
+                            <div className="flex justify-between p-2 bg-blue-900 bg-opacity-50 rounded border border-blue-700">
+                              <span>Buys/Sells:</span>
+                              <span className="font-bold">{selected.whales.buys}/{selected.whales.sells}</span>
+                            </div>
+                            <div className="flex justify-between p-2 bg-purple-900 bg-opacity-50 rounded">
+                              <span>Net Flow:</span>
+                              <span className="font-bold">{selected.whales.netFlow}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                          <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                            <Activity />
+                            {t.smartMoney}
+                          </h3>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between p-2 bg-gray-900 bg-opacity-50 rounded">
+                              <span>BOS:</span>
+                              <span className="font-bold">{selected.smartMoney.bos}</span>
+                            </div>
+                            <div className="flex justify-between p-2 bg-gray-900 bg-opacity-50 rounded">
+                              <span>CHoCH:</span>
+                              <span className="font-bold">{selected.smartMoney.choch}</span>
+                            </div>
+                            <div className="flex justify-between p-2 bg-gray-900 bg-opacity-50 rounded">
+                              <span>Zone:</span>
+                              <span className="font-bold">{selected.smartMoney.zone}</span>
+                            </div>
+                            <div className="flex justify-between p-2 bg-gray-900 bg-opacity-50 rounded">
+                              <span>Position:</span>
+                              <span className="font-bold">{selected.smartMoney.position}%</span>
+                            </div>
+                            <div className="flex justify-between p-2 bg-blue-900 bg-opacity-50 rounded">
+                              <span>Fair Value Gaps:</span>
+                              <span className="font-bold">{selected.smartMoney.fvg.length}</span>
+                            </div>
+                            <div className="flex justify-between p-2 bg-purple-900 bg-opacity-50 rounded">
+                              <span>Order Blocks:</span>
+                              <span className="font-bold">{selected.smartMoney.orderBlocks.length}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-6 mb-6">
+                        <div className="bg-gradient-to-br from-blue-900 to-cyan-900 rounded-xl p-6 border border-cyan-700">
+                          <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                            <Users />
+                            {t.traders}
+                          </h3>
+                          <div className="space-y-3">
+                            <div className="bg-gray-900 bg-opacity-50 rounded p-3">
+                              <div className="text-xs text-gray-400 mb-2">Volume Dağılımı</div>
+                              <div className="flex justify-between mb-1">
+                                <span className="text-sm">Retail:</span>
+                                <span className="font-bold">{selected.traders.retailRatio}%</span>
+                              </div>
+                              <div className="w-full bg-gray-700 rounded-full h-2 mb-2">
+                                <div
+                                  className="bg-gradient-to-r from-orange-500 to-yellow-500 h-2 rounded-full"
+                                  style={{ width: `${selected.traders.retailRatio}%` }}
+                                />
+                              </div>
+                              <div className="flex justify-between mb-1">
+                                <span className="text-sm">Institutional:</span>
+                                <span className="font-bold">{selected.traders.ratio}%</span>
+                              </div>
+                              <div className="w-full bg-gray-700 rounded-full h-2">
+                                <div
+                                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full"
+                                  style={{ width: `${selected.traders.ratio}%` }}
+                                />
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-2">
+                              <div className="bg-gray-900 bg-opacity-50 rounded p-2">
+                                <div className="text-xs text-gray-400">Dominance</div>
+                                <div className="font-bold">{selected.traders.dominance}</div>
+                              </div>
+                              <div className="bg-gray-900 bg-opacity-50 rounded p-2">
+                                <div className="text-xs text-gray-400">Sentiment</div>
+                                <div className="font-bold">{selected.traders.sentiment}</div>
+                              </div>
+                            </div>
+                            <div className="bg-purple-900 bg-opacity-50 rounded p-3 border border-purple-700">
+                              <div className="text-xs text-gray-400">Smart Money Flow</div>
+                              <div className="font-bold text-lg">{selected.traders.smartMoney}</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-gradient-to-br from-purple-900 to-pink-900 rounded-xl p-6 border border-pink-700">
+                          <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                            <Droplet />
+                            {t.liquidations}
+                          </h3>
+                          <div className="space-y-3">
+                            <div className="bg-red-900 bg-opacity-30 rounded p-3 border border-red-700">
+                              <div className="text-xs text-red-400 font-bold mb-2">🔻 LONG LİKİDASYONLARI</div>
+                              <div className="space-y-1 text-xs">
+                                <div className="flex justify-between">
+                                  <span>Extreme:</span>
+                                  <span className="font-mono">${selected.liquidations.long.extreme}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>High:</span>
+                                  <span className="font-mono">${selected.liquidations.long.high}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Medium:</span>
+                                  <span className="font-mono">${selected.liquidations.long.medium}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Cluster:</span>
+                                  <span className="font-mono">${selected.liquidations.long.cluster}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Support:</span>
+                                  <span className="font-mono">${selected.liquidations.long.support}</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="bg-green-900 bg-opacity-30 rounded p-3 border border-green-700">
+                              <div className="text-xs text-green-400 font-bold mb-2">🔺 SHORT LİKİDASYONLARI</div>
+                              <div className="space-y-1 text-xs">
+                                <div className="flex justify-between">
+                                  <span>Extreme:</span>
+                                  <span className="font-mono">${selected.liquidations.short.extreme}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>High:</span>
+                                  <span className="font-mono">${selected.liquidations.short.high}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Medium:</span>
+                                  <span className="font-mono">${selected.liquidations.short.medium}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Cluster:</span>
+                                  <span className="font-mono">${selected.liquidations.short.cluster}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Resistance:</span>
+                                  <span className="font-mono">${selected.liquidations.short.resistance}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-gradient-to-br from-orange-900 to-red-900 rounded-xl p-6 mb-6 border border-orange-700">
+                        <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                          <BarChart3 />
+                          MARKET MAKERS (WYCKOFF & VSA)
+                        </h3>
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="bg-gray-900 bg-opacity-50 rounded p-4">
+                            <div className="text-sm text-gray-400 mb-2">Wyckoff Analysis</div>
+                            <div className="space-y-2">
+                              <div className="flex justify-between p-2 bg-gray-800 rounded">
+                                <span className="text-sm">Phase:</span>
+                                <span className="font-bold text-orange-400">{selected.marketMakers.wyckoff.phase}</span>
+                              </div>
+                              <div className="flex justify-between p-2 bg-gray-800 rounded">
+                                <span className="text-sm">Position:</span>
+                                <span className="font-bold">{selected.marketMakers.wyckoff.position}%</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="bg-gray-900 bg-opacity-50 rounded p-4">
+                            <div className="text-sm text-gray-400 mb-2">CVD & VSA</div>
+                            <div className="space-y-2">
+                              <div className="flex justify-between p-2 bg-gray-800 rounded">
+                                <span className="text-sm">CVD Trend:</span>
+                                <span className="font-bold text-cyan-400">{selected.marketMakers.cvd.trend}</span>
+                              </div>
+                              <div className="flex justify-between p-2 bg-gray-800 rounded">
+                                <span className="text-sm">CVD Strength:</span>
+                                <span className="font-bold">{selected.marketMakers.cvd.strength}</span>
+                              </div>
+                              <div className="flex justify-between p-2 bg-gray-800 rounded">
+                                <span className="text-sm">VSA:</span>
+                                <span className="font-bold text-purple-400">{selected.marketMakers.vsa}</span>
+                              </div>
+                              <div className="flex justify-between p-2 bg-gray-800 rounded">
+                                <span className="text-sm">Volume Ratio:</span>
+                                <span className="font-bold">{selected.marketMakers.volumeProfile.ratio}x</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 mb-6 border border-cyan-700">
+                        <div className="flex justify-between items-center mb-4">
+                          <h3 className="text-2xl font-bold flex items-center gap-2">
+                            🤖 {t.aiAnalysis}
+                          </h3>
+                          <button
+                            onClick={() => analyzeWithAI(selected)}
+                            disabled={analyzing}
+                            className={`bg-gradient-to-r from-cyan-600 to-blue-600 px-6 py-3 rounded-lg font-bold transition-all ${
+                              analyzing ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'
+                            }`}
+                          >
+                            {analyzing ? `⏳ ${t.analyzing}...` : `🤖 ${t.aiAnalysis}`}
+                          </button>
+                        </div>
+                        {aiAnalysis ? (
+                          <div className="bg-black bg-opacity-50 rounded-lg p-4 max-h-96 overflow-y-auto border border-gray-700">
+                            <pre className="whitespace-pre-wrap text-sm font-mono">{aiAnalysis}</pre>
+                          </div>
+                        ) : (
+                          <div className="bg-black bg-opacity-30 rounded-lg p-8 text-center border border-gray-700">
+                            <div className="text-6xl mb-3">🤖</div>
+                            <p className="text-gray-400">
+                              {lang === 'de' 
+                                ? 'Bereit für detaillierte KI-Analyse mit GROQ Llama 3.3 70B'
+                                : 'GROQ Llama 3.3 70B ile detaylı AI analiz hazır'}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <button
+                          onClick={() =>
+                            window.open(
+                              `https://www.tradingview.com/chart/?symbol=BINANCE:${selected.symbol}`,
+                              '_blank'
+                            )
+                          }
+                          className="bg-gradient-to-r from-blue-600 to-cyan-600 py-4 rounded-xl font-bold hover:scale-105 transition-all"
+                        >
+                          📈 TradingView
+                        </button>
+                        <button
+                          onClick={() =>
+                            window.open(`https://www.binance.com/en/trade/${selected.symbol}`, '_blank')
+                          }
+                          className="bg-gradient-to-r from-yellow-600 to-orange-600 py-4 rounded-xl font-bold hover:scale-105 transition-all"
+                        >
+                          💱 Binance
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (aiAnalysis) {
+                              // Telegram için optimize edilmiş mesaj
+                              const message = `🔥 YasarAI ULTRA SCAN SONUCU 🔥
+
+📊 ${selected.symbol}
+━━━━━━━━━━━━━━━━━━━━━━
+💯 SKOR: ${selected.score}/100
+${selected.signal}
+
+💰 FİYAT: ${selected.price}
+📈 24h: ${selected.change >= 0 ? '+' : ''}${selected.change.toFixed(2)}%
+
+🎯 İŞLEM SEVİYELERİ:
+📍 Entry: ${selected.entry}
+✅ TP1: ${selected.tp1}
+✅ TP2: ${selected.tp2}
+✅ TP3: ${selected.tp3}
+🛑 Stop Loss: ${selected.sl}
+⚡ Risk/Reward: ${selected.rr}
+
+🏢 KURUMSAL ANALİZ:
+• Dark Pool: ${selected.institutional.darkPool}
+• Order Flow: ${selected.institutional.orderFlow}
+• Buy/Sell: ${selected.institutional.ratio}%
+
+🐋 WHALE ANALİZİ:
+• Status: ${selected.whales.status}
+• Sentiment: ${selected.whales.sentiment}
+• Accumulation: ${selected.whales.accumulation}%
+
+💎 SMART MONEY:
+• BOS: ${selected.smartMoney.bos}
+• Zone: ${selected.smartMoney.zone}
+• Position: ${selected.smartMoney.position}%
+
+🎯 STRATEJİK SİNYALLER:
+• Pump&Dump: ${selected.pumpDump.signal}
+• Trend Break: ${selected.trendBreak.signal}
+• Peaks&Dips: ${selected.peaksAndDips.signal}
+
+🤖 AI ANALİZ:
+${aiAnalysis.substring(0, 800)}...
+
+━━━━━━━━━━━━━━━━━━━━━━
+⚡ YasarAI ULTRA PRO MAX V4
+90 İNDİKATÖR • 5 BORSA • GROQ AI`;
+
+                              // Telegram'a paylaş
+                              const telegramUrl = `https://t.me/share/url?text=${encodeURIComponent(message)}`;
+                              window.open(telegramUrl, '_blank');
+                            }
+                          }}
+                          disabled={!aiAnalysis}
+                          className={`bg-gradient-to-r from-green-600 to-emerald-600 py-4 rounded-xl font-bold transition-all ${
+                            aiAnalysis ? 'hover:scale-105' : 'opacity-50 cursor-not-allowed'
+                          }`}
+                        >
+                          📱 Telegram
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (aiAnalysis) {
+                              navigator.clipboard.writeText(aiAnalysis).then(() => {
+                                alert('✅ ' + (lang === 'de' ? 'Kopiert!' : 'Kopyalandı!'));
+                              });
+                            }
+                          }}
+                          disabled={!aiAnalysis}
+                          className={`bg-gradient-to-r from-purple-600 to-pink-600 py-4 rounded-xl font-bold transition-all ${
+                            aiAnalysis ? 'hover:scale-105' : 'opacity-50 cursor-not-allowed'
+                          }`}
+                        >
+                          📋 {t.copy}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        }
+
+        ReactDOM.render(<YasarAI />, document.getElementById('root'));
+
+        // Initialize Lucide icons after render
+        setTimeout(() => {
+          if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+          }
+        }, 100);
+    </script>
+</body>
+</html>
